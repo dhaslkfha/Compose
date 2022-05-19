@@ -1,2 +1,10 @@
+//import javax.naming.Binding
+
 include ':app'
+//include ':my_flutter01'
+setBinding(new Binding([gradle:this]))
+evaluate(new File(
+        settingsDir.parentFile,
+        'Compose/my_flutter01/.android/include_flutter.groovy'
+))
 rootProject.name = "Compose"

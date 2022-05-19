@@ -2,15 +2,18 @@
 
 package com.example.compose
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.*
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -18,26 +21,36 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.example.compose.ui.AppTheme
 import com.example.compose.ui.purple200
+import com.example.compose.utlis.MConstant.Engine_ID
+import io.flutter.embedding.android.FlutterActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                Greeting("Android")
+                Greeting("Android") {
+//                    startActivity(Intent(this, FlutterActivity::class.java))
+//                    startActivity(FlutterActivity.createDefaultIntent(this))
+                    startActivity(
+                        FlutterActivity
+                            .withCachedEngine(Engine_ID)
+//                            .initialRoute("/my_route")
+                            .build(this)
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String = "") {
+fun Greeting(name: String = "", toFlutter: () -> Unit) {
     var visible by remember {
         mutableStateOf(true)
     }
@@ -107,6 +120,14 @@ fun Greeting(name: String = "") {
                     .padding(20.dp)
             )
         }
+        Button(onClick = {
+            toFlutter.invoke()
+        }) {
+            Text(
+                text = "点击进入Flutter", modifier = Modifier
+                    .padding(20.dp)
+            )
+        }
 
     }
 }
@@ -115,6 +136,8 @@ fun Greeting(name: String = "") {
 @Composable
 fun DefaultPreview() {
     AppTheme {
-        Greeting("Android")
+        Greeting("Android") {
+
+        }
     }
 }
