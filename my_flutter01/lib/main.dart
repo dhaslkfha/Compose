@@ -187,14 +187,28 @@ class _MyHomePageState extends State<MyHomePage> {
                     onPressed: () {
                       Navigator.of(context)
                           .push(MaterialPageRoute(builder: (context) {
-                        var pls = MaterialApp(title: "第二页", home: secondPage);
+                        var pls =
+                            MaterialApp(title: "GridView", home: gridPage);
                         return MaterialApp(
                           title: "Shopping App",
                           home: pls,
                         );
                       }));
                     },
-                    child: Text("跳转第二页")),
+                    child: const Text("跳转GridView")),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        var pls =
+                            MaterialApp(title: "GridView", home: listPage);
+                        return MaterialApp(
+                          title: "Shopping App",
+                          home: pls,
+                        );
+                      }));
+                    },
+                    child: const Text("跳转ListView")),
               ],
             ),
             Column(
@@ -217,11 +231,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: [
                     Image.network(
                       "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto",
-                      height: 120,
+                      height: 80,
                     ),
                     const Center(
-                      child: Image(image: AssetImage('images/myimg.png')),
+                      child: Image(
+                        image: AssetImage('images/myimg.png'),
+                        height: 80,
+                      ),
                     ),
+                    _buildStack(),
                   ],
                 ),
                 Column(
@@ -303,6 +321,31 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
+            Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.abc),
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return _buildCard();
+                    }));
+                  },
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.star,
+                    color: Colors.red,
+                  ),
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return _buildDemo1();
+                    }));
+                  },
+                ),
+              ],
+            )
           ],
         ),
       ),
@@ -462,7 +505,7 @@ class _ShoppingListState extends State<ShoppingList> {
   }
 }
 
-Widget secondPage() => Scaffold(
+var gridPage = Scaffold(
   appBar: AppBar(
     title: const Text("hello"),
   ),
@@ -484,3 +527,206 @@ List<Container> _buildGridTileList(int count) => List.generate(
     (i) => Container(
         child: Image.network(
             "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto")));
+
+var listPage = Scaffold(
+  appBar: AppBar(
+    title: const Text("hello"),
+  ),
+  body: _buildList(),
+);
+
+Widget _buildList() {
+  return ListView(
+    children: [
+      _tile('CineArts at the Empire', '85 W Portal Ave', Icons.theaters),
+      _tile('The Castro Theater', '429 Castro St', Icons.theaters),
+      _tile('Alamo Drafthouse Cinema', '2550 Mission St', Icons.theaters),
+      _tile('Roxie Theater', '3117 16th St', Icons.theaters),
+      _tile('United Artists Stonestown Twin', '501 Buckingham Way',
+          Icons.theaters),
+      _tile('AMC Metreon 16', '135 4th St #3000', Icons.theaters),
+      const Divider(),
+      _tile('K\'s Kitchen', '757 Monterey Blvd', Icons.restaurant),
+      _tile('Emmy\'s Restaurant', '1923 Ocean Ave', Icons.restaurant),
+      _tile('Chaiya Thai Restaurant', '272 Claremont Blvd', Icons.restaurant),
+      _tile('La Ciccia', '291 30th St', Icons.restaurant),
+    ],
+  );
+}
+
+ListTile _tile(String title, String subtitle, IconData icon) {
+  return ListTile(
+    title: Text(title,
+        style: const TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 20,
+        )),
+    subtitle: Text(subtitle),
+    leading: Icon(
+      icon,
+      color: Colors.blue[500],
+    ),
+  );
+}
+
+Widget _buildStack() {
+  return Stack(
+    alignment: const Alignment(0.5, 0.5),
+    children: [
+      const CircleAvatar(
+        backgroundImage: AssetImage('images/pic.jpg'),
+        radius: 50,
+      ),
+      Container(
+        decoration: const BoxDecoration(
+          color: Colors.black45,
+        ),
+        child: const Text(
+          'Mia B',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+Widget _buildCard() {
+  return SizedBox(
+    height: 120,
+    child: Card(
+      elevation: 24,
+      child: Column(
+        children: [
+          ListTile(
+            title: const Text(
+              '1625 Main Street',
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+            subtitle: const Text('My City, CA 9984'),
+            leading: Icon(
+              Icons.restaurant_menu,
+              color: Colors.blue[500],
+            ),
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text(
+              '(408) 555-1212',
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+            leading: Icon(
+              Icons.contact_phone,
+              color: Colors.blue[500],
+            ),
+          ),
+          ListTile(
+            title: const Text('costa@example.com'),
+            leading: Icon(
+              Icons.contact_mail,
+              color: Colors.blue[500],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildDemo1() {
+  return Scaffold(
+      appBar: AppBar(
+        title: Text("Demo1"),
+      ),
+      body: ListView(
+        children: [
+          Image.asset(
+            'images/img.png',
+            width: 600,
+            height: 240,
+            fit: BoxFit.cover,
+          ),
+          _titleSection(),
+          buttonSection,
+          textSection,
+        ],
+      ));
+}
+
+Widget _titleSection() {
+  return Container(
+    padding: const EdgeInsets.all(32),
+    child: Row(
+      children: [
+        Expanded(
+            child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: const Text(
+                'Oeschinen Lake Campground',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+            ),
+            Text(
+              'Kandersteg, Switzerland',
+              style: TextStyle(color: Colors.grey[500], fontSize: 20),
+            ),
+          ],
+        )),
+        Icon(
+          Icons.star,
+          color: Colors.red[500],
+        ),
+        const Text('41', style: TextStyle(fontSize: 20)),
+      ],
+    ),
+  );
+}
+
+// Color color = Theme.of(context).primaryColor;
+Widget buttonSection = Row(
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    _buildButtonColumn(Colors.grey, Icons.call, "CALL"),
+    _buildButtonColumn(Colors.grey, Icons.near_me, "ROUTE"),
+    _buildButtonColumn(Colors.grey, Icons.share, "SHARE"),
+  ],
+);
+
+Column _buildButtonColumn(Color color, IconData iconData, String label) {
+  return Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(
+        iconData,
+        color: color,
+      ),
+      Container(
+        margin: const EdgeInsets.only(top: 8),
+        child: Text(
+          label,
+          style: TextStyle(
+              fontSize: 12, fontWeight: FontWeight.w400, color: color),
+        ),
+      )
+    ],
+  );
+}
+
+Widget textSection = const Padding(
+  padding: EdgeInsets.all(32),
+  child: Text(
+    'Lake Oeschinen lies at the foot of the Blüemlisalp in the Bernese '
+    'Alps. Situated 1,578 meters above sea level, it is one of the '
+    'larger Alpine Lakes. A gondola ride from Kandersteg, followed by a '
+    'half-hour walk through pastures and pine forest, leads you to the '
+    'lake, which warms to 20 degrees Celsius in the summer. Activities '
+    'enjoyed here include rowing, and riding the summer toboggan run.',
+    softWrap: true,
+  ),
+);
