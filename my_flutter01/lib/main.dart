@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -398,7 +399,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     onPressed: () {
                       Navigator.of(context)
                           .push(MaterialPageRoute(builder: (context) {
-                        return const ParentWidget();
+                        return FadeInDemo();
                       }));
                     },
                   ),
@@ -410,7 +411,36 @@ class _MyHomePageState extends State<MyHomePage> {
                     onPressed: () {
                       Navigator.of(context)
                           .push(MaterialPageRoute(builder: (context) {
-                        return const ParentWidget();
+                        return const AnimatedContainerDemo();
+                      }));
+                    },
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.analytics,
+                      color: Colors.pink,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return const LogoApp();
+                      }));
+                    },
+                  ),
+                  IconButton(
+                    tooltip: "重复使用的Animate",
+                    icon: const Icon(
+                      Icons.animation_sharp,
+                      color: Colors.pink,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return LogoApp2();
                       }));
                     },
                   ),
@@ -2357,6 +2387,219 @@ class _TapboxCState extends State<TapboxC> {
                 )
               : null,
         ),
+      ),
+    );
+  }
+}
+
+class FadeInDemo extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _FadeInDemoState();
+  }
+}
+
+class _FadeInDemoState extends State<FadeInDemo> {
+  double opacity = 0.0;
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: [
+            Image.network(
+                'https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto'),
+            TextButton(
+                onPressed: () => setState(() {
+                      opacity = 1;
+                    }),
+                child: const Text(
+                  'show details',
+                  style: TextStyle(color: Colors.blueAccent),
+                )),
+            AnimatedOpacity(
+                duration: const Duration(seconds: 2),
+                opacity: opacity,
+                child: Column(
+                  children: const [
+                    Text('Type:Owl'),
+                    Text('Age:39'),
+                    Text('Employment:None'),
+                  ],
+                )),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+///Container 动画
+double randomBorderRadius() {
+  return Random().nextDouble() * 64;
+}
+
+double randomMargin() {
+  return Random().nextDouble() * 64;
+}
+
+Color randomColor() {
+  return Color(0xFFFFFFFF & Random().nextInt(0xFFFFFFFF));
+}
+
+class AnimatedContainerDemo extends StatefulWidget {
+  const AnimatedContainerDemo({Key? key}) : super(key: key);
+
+  @override
+  _AnimatedContainerDemoState createState() => _AnimatedContainerDemoState();
+}
+
+class _AnimatedContainerDemoState extends State<AnimatedContainerDemo> {
+  late Color color;
+  late double borderRadius;
+  late double margin;
+
+  @override
+  initState() {
+    super.initState();
+    color = randomColor();
+    borderRadius = randomBorderRadius();
+    margin = randomMargin();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              width: 128,
+              height: 128,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 400),
+                margin: EdgeInsets.all(margin),
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(borderRadius),
+                ),
+                curve: Curves.easeInOutBack,
+              ),
+            ),
+            ElevatedButton(
+              child: const Text('change'),
+              onPressed: () => {
+                setState(() {
+                  color = randomColor();
+                  borderRadius = randomBorderRadius();
+                  margin = randomMargin();
+                }),
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+///Animation
+class LogoApp extends StatefulWidget {
+  const LogoApp({super.key});
+
+  @override
+  _LogoAppState createState() => _LogoAppState();
+}
+
+class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
+  late Animation<double> animation;
+  late AnimationController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller =
+        AnimationController(duration: const Duration(seconds: 2), vsync: this);
+    animation = Tween<double>(begin: 0, end: 300).animate(controller)
+      ..addListener(() {
+        setState(() {
+          //
+        });
+      });
+    controller.forward();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 10),
+        height: animation.value,
+        width: animation.value,
+        child: const FlutterLogo(),
+      ),
+    );
+  }
+}
+
+///Animation2 Animation重复使用
+class LogoApp2 extends StatefulWidget {
+  const LogoApp2({super.key});
+
+  @override
+  _LogoAppState2 createState() => _LogoAppState2();
+}
+
+class _LogoAppState2 extends State<LogoApp2>
+    with SingleTickerProviderStateMixin {
+  late Animation<double> animation;
+  late AnimationController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller =
+        AnimationController(duration: const Duration(seconds: 2), vsync: this);
+    animation = Tween<double>(begin: 0, end: 300).animate(controller);
+    controller.forward();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedLogo(
+      animation: animation,
+    );
+  }
+}
+
+class AnimatedLogo extends AnimatedWidget {
+  const AnimatedLogo({super.key, required Animation<double> animation})
+      : super(listenable: animation);
+
+  @override
+  Widget build(BuildContext context) {
+    final animation = listenable as Animation<double>;
+    return Center(
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 10),
+        height: animation.value,
+        width: animation.value,
+        child: const FlutterLogo(),
       ),
     );
   }

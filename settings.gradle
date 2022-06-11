@@ -7,4 +7,4 @@ evaluate(new File(
         settingsDir.parentFile,
         'Compose/my_flutter01/.android/include_flutter.groovy'
 ))
-rootProject.name = "Compose"
+rootProject.name = "ComposeAndFlutter"
