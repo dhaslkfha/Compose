@@ -5,6 +5,7 @@ package com.example.compose
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
@@ -29,22 +30,30 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
+import com.example.compose.model.HomeViewModel
 import com.example.compose.ui.AppTheme
 import com.example.compose.ui.purple200
 import com.example.compose.utlis.MConstant.Engine_ID
+import dagger.hilt.android.AndroidEntryPoint
 import io.flutter.embedding.android.FlutterActivity
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
+
+//@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        val mainViewModel: MainViewModel by viewModels()
         super.onCreate(savedInstanceState)
+        Log.e("Hilt", "${mainViewModel.add(4, 5)}")
+
         setContent {
             AppTheme {
-                Greeting("Android") {
+                Greeting(mainViewModel.name) {
 //                    startActivity(Intent(this, FlutterActivity::class.java))
 //                    startActivity(FlutterActivity.createDefaultIntent(this))
                     startActivity(
@@ -61,6 +70,9 @@ class MainActivity : AppCompatActivity() {
 
 @Composable
 fun Greeting(name: String = "", toFlutter: () -> Unit) {
+    var viewModel = hiltViewModel<MainViewModel>()
+    var homeViewModel = hiltViewModel<HomeViewModel>()
+    homeViewModel.add(3)
     var visible by remember {
         mutableStateOf(true)
     }
@@ -74,7 +86,7 @@ fun Greeting(name: String = "", toFlutter: () -> Unit) {
         Image(painter = rememberImagePainter(data = R.mipmap.ic_launcher), contentDescription = "")
         MySpace()
         //文字
-        Text(text = "Hello $name!")
+        Text(text = "Hello $name!,your age is ${viewModel.age},your num's ${homeViewModel.num}")
         MySpace()
         //画圆
         Canvas(modifier = Modifier
@@ -339,7 +351,8 @@ fun Greeting(name: String = "", toFlutter: () -> Unit) {
 
         Button(
             onClick = { /* do something */ },
-            interactionSource = interactionSource) {
+            interactionSource = interactionSource
+        ) {
             Text(if (isPressed) "Pressed!" else "Not pressed")
         }
         MySpace()
@@ -497,9 +510,13 @@ fun TransformableSample() {
         rotation += rotationChange
         offset += offsetChange
     }
-    Box(modifier = Modifier
-        .height(500.dp)
-        .fillMaxWidth().border(width = 1.dp, color = Color.Blue), contentAlignment = Alignment.Center) {
+    Box(
+        modifier = Modifier
+            .height(500.dp)
+            .fillMaxWidth()
+            .border(width = 1.dp, color = Color.Blue),
+        contentAlignment = Alignment.Center
+    ) {
 
         Box(
             Modifier
