@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     VisualDensity densityAmt =
-        const VisualDensity(horizontal: 1.0, vertical: 2.0);
+    const VisualDensity(horizontal: 1.0, vertical: 2.0);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -42,7 +42,9 @@ class MyApp extends StatelessWidget {
         // or press Run > Flutter Hot Reload in a Flutter IDE). Notice that the
         // counter didn't reset back to zero; the application is not restarted.
         primarySwatch: Colors.green,
-        visualDensity: Theme.of(context).visualDensity,
+        visualDensity: Theme
+            .of(context)
+            .visualDensity,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -122,7 +124,10 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Text(
                 '$_counter',
-                style: Theme.of(context).textTheme.headline4,
+                style: Theme
+                    .of(context)
+                    .textTheme
+                    .headline4,
               ),
               Container(
                 height: 40,
@@ -199,7 +204,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Navigator.of(context)
                             .push(MaterialPageRoute(builder: (context) {
                           var pls =
-                              MaterialApp(title: "GridView", home: gridPage);
+                          MaterialApp(title: "GridView", home: gridPage);
                           return MaterialApp(
                             title: "Shopping App",
                             home: pls,
@@ -212,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Navigator.of(context)
                             .push(MaterialPageRoute(builder: (context) {
                           var pls =
-                              MaterialApp(title: "GridView", home: listPage);
+                          MaterialApp(title: "GridView", home: listPage);
                           return MaterialApp(
                             title: "Shopping App",
                             home: pls,
@@ -444,6 +449,19 @@ class _MyHomePageState extends State<MyHomePage> {
                       }));
                     },
                   ),
+                  IconButton(
+                    tooltip: "AnimatedBuilder",
+                    icon: const Icon(
+                      Icons.bubble_chart,
+                      color: Colors.deepOrangeAccent,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return LogoApp3();
+                      }));
+                    },
+                  ),
                 ],
               )
             ],
@@ -527,17 +545,18 @@ class ShoppingListItem extends StatelessWidget {
   final bool isCart;
   final CartChangedCallback callback;
 
-  const ShoppingListItem(
-      {Key? key,
-      required this.product,
-      required this.isCart,
-      required this.callback})
+  const ShoppingListItem({Key? key,
+    required this.product,
+    required this.isCart,
+    required this.callback})
       : super(key: key);
 
   Color _getColor(BuildContext context) {
     print('${rootBundle.loadString('assets/config.json')}');
     // _demopackageDemo();
-    return isCart ? Colors.black54 : Theme.of(context).primaryColor;
+    return isCart ? Colors.black54 : Theme
+        .of(context)
+        .primaryColor;
   }
 
   TextStyle? _getTextStyle(BuildContext context) {
@@ -615,21 +634,24 @@ var gridPage = Scaffold(
   body: _buildGrid(),
 );
 
-Widget _buildGrid() => GridView.count(
-    crossAxisCount: 2,
-    padding: const EdgeInsets.all(4),
-    mainAxisSpacing: 4,
-    crossAxisSpacing: 4,
-    children: _buildGridTileList(30));
+Widget _buildGrid() =>
+    GridView.count(
+        crossAxisCount: 2,
+        padding: const EdgeInsets.all(4),
+        mainAxisSpacing: 4,
+        crossAxisSpacing: 4,
+        children: _buildGridTileList(30));
 
 // The images are saved with names pic0.jpg, pic1.jpg...pic29.jpg.
 // The List.generate() constructor allows an easy way to create
 // a list when objects have a predictable naming pattern.
-List<Container> _buildGridTileList(int count) => List.generate(
-    count,
-    (i) => Container(
-        child: Image.network(
-            "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto")));
+List<Container> _buildGridTileList(int count) =>
+    List.generate(
+        count,
+            (i) =>
+            Container(
+                child: Image.network(
+                    "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto")));
 
 var listPage = Scaffold(
   appBar: AppBar(
@@ -804,21 +826,21 @@ Widget _titleSection() {
       children: [
         Expanded(
             child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: const Text(
-                'Oeschinen Lake Campground',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-              ),
-            ),
-            Text(
-              'Kandersteg, Switzerland',
-              style: TextStyle(color: Colors.grey[500], fontSize: 20),
-            ),
-          ],
-        )),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: const Text(
+                    'Oeschinen Lake Campground',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                ),
+                Text(
+                  'Kandersteg, Switzerland',
+                  style: TextStyle(color: Colors.grey[500], fontSize: 20),
+                ),
+              ],
+            )),
         FavoriteWidget(),
         // Icon(
         //   Icons.star,
@@ -864,11 +886,11 @@ Widget textSection = const Padding(
   padding: EdgeInsets.all(32),
   child: Text(
     'Lake Oeschinen lies at the foot of the Blüemlisalp in the Bernese '
-    'Alps. Situated 1,578 meters above sea level, it is one of the '
-    'larger Alpine Lakes. A gondola ride from Kandersteg, followed by a '
-    'half-hour walk through pastures and pine forest, leads you to the '
-    'lake, which warms to 20 degrees Celsius in the summer. Activities '
-    'enjoyed here include rowing, and riding the summer toboggan run.',
+        'Alps. Situated 1,578 meters above sea level, it is one of the '
+        'larger Alpine Lakes. A gondola ride from Kandersteg, followed by a '
+        'half-hour walk through pastures and pine forest, leads you to the '
+        'lake, which warms to 20 degrees Celsius in the summer. Activities '
+        'enjoyed here include rowing, and riding the summer toboggan run.',
     softWrap: true,
   ),
 );
@@ -922,7 +944,10 @@ Widget _buildAdapteWidget(BuildContext context) {
 enum ScreenSize { Small, Normal, Large, ExtraLarge }
 
 ScreenSize getSize(BuildContext context) {
-  double deviceWidth = MediaQuery.of(context).size.shortestSide;
+  double deviceWidth = MediaQuery
+      .of(context)
+      .size
+      .shortestSide;
   if (deviceWidth > 900) return ScreenSize.ExtraLarge;
   return ScreenSize.Small;
 }
@@ -960,9 +985,9 @@ class TextStyles {
     fontFamily: Fonts.raleway,
   );
   static const TextStyle buttonText1 =
-      TextStyle(fontWeight: FontWeight.bold, fontSize: 14);
+  TextStyle(fontWeight: FontWeight.bold, fontSize: 14);
   static TextStyle buttonText2 =
-      TextStyle(fontWeight: FontWeight.normal, fontSize: 11);
+  TextStyle(fontWeight: FontWeight.normal, fontSize: 11);
   static TextStyle h1 = TextStyle(fontWeight: FontWeight.bold, fontSize: 22);
   static TextStyle h2 = TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
   static late TextStyle body1 = raleway.copyWith(color: Color(0xFF42A5F5));
@@ -970,7 +995,8 @@ class TextStyles {
 }
 
 ///自定义ScrollListener
-Widget scrollLis() => Listener(
+Widget scrollLis() =>
+    Listener(
       onPointerSignal: (evesnt) {
         if (evesnt is PointerScrollEvent) print(evesnt.scrollDelta.dy);
       },
@@ -1013,31 +1039,33 @@ class _BasicActionDetectorState extends State<BasicActionDetector> {
 */
 
 ///Tab
-Widget _focusGroup() => Column(
+Widget _focusGroup() =>
+    Column(
       children: [
         FocusTraversalGroup(
             child: Column(
-          children: const [
-            Text("Groupchild1"),
-            Text("Groupchild2"),
-            Text("Groupchild3"),
-          ],
-        )),
+              children: const [
+                Text("Groupchild1"),
+                Text("Groupchild2"),
+                Text("Groupchild3"),
+              ],
+            )),
       ],
     );
 
 ///KEYBOARD
-Widget _keyboardListen() => Focus(
+Widget _keyboardListen() =>
+    Focus(
         child: ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 400, minHeight: 30),
-      child: const TextField(
-        decoration: InputDecoration(
-            border: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 2),
-          borderRadius: BorderRadius.all(Radius.circular(2)),
-        )),
-      ),
-    ));
+          constraints: const BoxConstraints(maxWidth: 400, minHeight: 30),
+          child: const TextField(
+            decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red, width: 2),
+                  borderRadius: BorderRadius.all(Radius.circular(2)),
+                )),
+          ),
+        ));
 
 ///shortcuts
 // Define a class for each type of shortcut action you want
@@ -1050,7 +1078,7 @@ Widget _buildshortcut(BuildContext context) {
     // Bind intents to key combinations Control+N
     shortcuts: <ShortcutActivator, Intent>{
       SingleActivator(LogicalKeyboardKey.keyN, control: true):
-          CreateNewItemIntent(),
+      CreateNewItemIntent(),
     },
     child: Actions(
       // Bind intents to an actual method in your code
@@ -1071,7 +1099,7 @@ Widget _buildshortcut(BuildContext context) {
 
 var globalLis = <ShortcutActivator, Intent>{
   const SingleActivator(LogicalKeyboardKey.keyA, control: true):
-      const CreateNewItemIntent(),
+  const CreateNewItemIntent(),
 };
 
 ///全局监听快捷键，不知如何使用
@@ -1089,7 +1117,9 @@ void dispose() {
 
 ///监听是否按下
 bool isKeyDown(Set<LogicalKeyboardKey> keys) {
-  return keys.intersection(RawKeyboard.instance.keysPressed).isNotEmpty;
+  return keys
+      .intersection(RawKeyboard.instance.keysPressed)
+      .isNotEmpty;
 }
 
 void _handleKey(event) {
@@ -1226,8 +1256,7 @@ abstract class Example extends StatelessWidget {
 //////////////////////////////////////////////////
 
 class FlutterLayoutArticle extends StatefulWidget {
-  const FlutterLayoutArticle(
-    this.examples, {
+  const FlutterLayoutArticle(this.examples, {
     super.key,
   });
 
@@ -1296,7 +1325,7 @@ class _FlutterLayoutArticleState extends State<FlutterLayoutArticle> {
                             Container(
                               width: 58,
                               padding:
-                                  const EdgeInsets.only(left: 4.0, right: 4.0),
+                              const EdgeInsets.only(left: 4.0, right: 4.0),
                               child: button(i + 1),
                             ),
                         ],
@@ -2063,7 +2092,7 @@ class Example24 extends Example {
           color: red,
           child: const Text(
             'This is a very long text that '
-            'won\'t fit the line.',
+                'won\'t fit the line.',
             style: big,
           ),
         ),
@@ -2382,9 +2411,9 @@ class _TapboxCState extends State<TapboxC> {
           color: widget.active ? Colors.lightGreen[700] : Colors.grey[600],
           border: _highlight
               ? Border.all(
-                  color: Colors.teal[700]!,
-                  width: 10.0,
-                )
+            color: Colors.teal[700]!,
+            width: 10.0,
+          )
               : null,
         ),
       ),
@@ -2413,7 +2442,8 @@ class _FadeInDemoState extends State<FadeInDemo> {
             Image.network(
                 'https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto'),
             TextButton(
-                onPressed: () => setState(() {
+                onPressed: () =>
+                    setState(() {
                       opacity = 1;
                     }),
                 child: const Text(
@@ -2491,7 +2521,8 @@ class _AnimatedContainerDemoState extends State<AnimatedContainerDemo> {
             ),
             ElevatedButton(
               child: const Text('change'),
-              onPressed: () => {
+              onPressed: () =>
+              {
                 setState(() {
                   color = randomColor();
                   borderRadius = randomBorderRadius();
@@ -2506,7 +2537,7 @@ class _AnimatedContainerDemoState extends State<AnimatedContainerDemo> {
   }
 }
 
-///Animation
+///Animation，使用addListener
 class LogoApp extends StatefulWidget {
   const LogoApp({super.key});
 
@@ -2551,7 +2582,7 @@ class _LogoAppState extends State<LogoApp> with SingleTickerProviderStateMixin {
   }
 }
 
-///Animation2 Animation重复使用
+///Animation2 Animation重复使用,使用AnimatedWidget
 class LogoApp2 extends StatefulWidget {
   const LogoApp2({super.key});
 
@@ -2569,7 +2600,17 @@ class _LogoAppState2 extends State<LogoApp2>
     super.initState();
     controller =
         AnimationController(duration: const Duration(seconds: 2), vsync: this);
-    animation = Tween<double>(begin: 0, end: 300).animate(controller);
+    // animation = Tween<double>(begin: 0, end: 300).animate(controller)
+    animation = CurvedAnimation(parent: controller, curve: Curves.easeIn)
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          controller.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          controller.forward();
+        }
+      })..addStatusListener((status) {
+        print("$status");
+      });
     controller.forward();
   }
 
@@ -2591,16 +2632,92 @@ class AnimatedLogo extends AnimatedWidget {
   const AnimatedLogo({super.key, required Animation<double> animation})
       : super(listenable: animation);
 
+  static final _opacityTween = Tween<double>(begin: 0.1,end: 1);
+  static final _sizeTween = Tween<double>(begin: 0,end: 300);
+
   @override
   Widget build(BuildContext context) {
     final animation = listenable as Animation<double>;
     return Center(
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 10),
-        height: animation.value,
-        width: animation.value,
-        child: const FlutterLogo(),
+      child: Opacity(
+        opacity: _opacityTween.evaluate(animation),
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 10),
+          height: _sizeTween.evaluate(animation),
+          width: _sizeTween.evaluate(animation),
+          child: const FlutterLogo(),
+        ),
       ),
     );
+  }
+}
+
+///addStatusListener()
+///AnimatedBuilder
+class LogoWidget extends StatelessWidget {
+  const LogoWidget({super.key});
+
+  // Leave out the height and width so it fills the animating parent
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: const FlutterLogo(),
+    );
+  }
+}
+
+class GrowTransition extends StatelessWidget {
+
+  const GrowTransition(
+      {required this.child, required this.animation, super.key});
+
+  final Widget child;
+  final Animation<double> animation;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: AnimatedBuilder(
+        animation: animation,
+        builder: (context, child) {
+          return SizedBox(
+            height: animation.value,
+            width: animation.value,
+            child: child,
+          );
+        },
+        child: child,
+      ),
+    );
+  }
+}
+
+class LogoApp3 extends StatefulWidget{
+
+  const LogoApp3({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _LogoApp3State();
+
+}
+class _LogoApp3State extends State<LogoApp3> with SingleTickerProviderStateMixin{
+
+  late Animation<double> animation;
+  late AnimationController controller;
+
+  @override
+  void initState(){
+    super.initState();
+    controller =
+        AnimationController(vsync: this,duration: const Duration(seconds: 2));
+    animation = Tween<double>(begin: 0,end: 300).animate(controller);
+    controller.forward();
+
+  }
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return GrowTransition(child: const LogoWidget(), animation: animation);
   }
 }
