@@ -5,7 +5,9 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'dart:math' as math;
 import 'adaptedemo.dart';
 
 void main() => runApp(const MyApp());
@@ -459,6 +461,45 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.of(context)
                           .push(MaterialPageRoute(builder: (context) {
                         return LogoApp3();
+                      }));
+                    },
+                  ),
+                  IconButton(
+                    tooltip: "AnimatedBuilder",
+                    icon: const Icon(
+                      Icons.cabin,
+                      color: Colors.deepOrange,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return HeroAnimation();
+                      }));
+                    },
+                  ),
+                  IconButton(
+                    tooltip: "AnimatedBuilder",
+                    icon: const Icon(
+                      Icons.dangerous,
+                      color: Colors.cyan,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return RadialExpansionDemo();
+                      }));
+                    },
+                  ),
+                  IconButton(
+                    tooltip: "StaggerAnimation",
+                    icon: const Icon(
+                      Icons.safety_check,
+                      color: Colors.black,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return StaggeredWidget();
                       }));
                     },
                   ),
@@ -2632,8 +2673,8 @@ class AnimatedLogo extends AnimatedWidget {
   const AnimatedLogo({super.key, required Animation<double> animation})
       : super(listenable: animation);
 
-  static final _opacityTween = Tween<double>(begin: 0.1,end: 1);
-  static final _sizeTween = Tween<double>(begin: 0,end: 300);
+  static final _opacityTween = Tween<double>(begin: 0.1, end: 1);
+  static final _sizeTween = Tween<double>(begin: 0, end: 300);
 
   @override
   Widget build(BuildContext context) {
@@ -2668,7 +2709,6 @@ class LogoWidget extends StatelessWidget {
 }
 
 class GrowTransition extends StatelessWidget {
-
   const GrowTransition(
       {required this.child, required this.animation, super.key});
 
@@ -2693,31 +2733,409 @@ class GrowTransition extends StatelessWidget {
   }
 }
 
-class LogoApp3 extends StatefulWidget{
-
+class LogoApp3 extends StatefulWidget {
   const LogoApp3({super.key});
 
   @override
   State<StatefulWidget> createState() => _LogoApp3State();
-
 }
-class _LogoApp3State extends State<LogoApp3> with SingleTickerProviderStateMixin{
 
+class _LogoApp3State extends State<LogoApp3>
+    with SingleTickerProviderStateMixin {
   late Animation<double> animation;
   late AnimationController controller;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     controller =
-        AnimationController(vsync: this,duration: const Duration(seconds: 2));
-    animation = Tween<double>(begin: 0,end: 300).animate(controller);
+        AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    animation = Tween<double>(begin: 0, end: 300).animate(controller);
     controller.forward();
-
   }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return GrowTransition(child: const LogoWidget(), animation: animation);
   }
+}
+
+///Hero Widget.
+class PhotoHero extends StatelessWidget {
+  const PhotoHero({Key? key,
+    required this.photo,
+    required this.callback,
+    required this.width})
+      : super(key: key);
+
+  final String photo;
+  final VoidCallback callback;
+  final double width;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: width,
+      child: Hero(
+        tag: photo,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: callback,
+            child: Image.asset(
+              photo,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class HeroAnimation extends StatelessWidget {
+  const HeroAnimation({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // timeDilation = 5.0;
+    return Scaffold(
+      appBar: AppBar(),
+      body: Center(
+        child: PhotoHero(
+          photo: 'images/img.png',
+          width: 300.0,
+          callback: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              return Scaffold(
+                appBar: AppBar(),
+                body: Container(
+                  color: Colors.lightBlueAccent,
+                  padding: EdgeInsets.all(16),
+                  alignment: Alignment.topLeft,
+                  child: PhotoHero(
+                    photo: 'images/img.png',
+                    width: 100.0,
+                    callback: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+              );
+            }));
+          },
+        ),
+      ),
+    );
+  }
+}
+
+///Hero 2
+class PhotoHero2 extends StatelessWidget {
+  const PhotoHero2({Key? key, required this.photo, required this.callback})
+      : super(key: key);
+
+  final String photo;
+  final VoidCallback callback;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Theme
+          .of(context)
+          .primaryColor
+          .withOpacity(0.25),
+      child: InkWell(
+        onTap: callback,
+        child: Image.asset(
+          photo,
+          fit: BoxFit.contain,
+        ),
+      ),
+    );
+  }
+}
+
+class RadialExpansion extends StatelessWidget {
+  const RadialExpansion(
+      { super.key, required this.maxRadias, required this.child,})
+      : clipRectSize = 2.0 * (maxRadias / math.sqrt2);
+
+  final double maxRadias;
+  final double clipRectSize;
+  final Widget child;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipOval(
+      child: Center(
+        child: SizedBox(
+          width: clipRectSize,
+          height: clipRectSize,
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
+class RadialExpansionDemo extends StatelessWidget {
+  static double kMinRadius = 32.0;
+  static double kMaxRadius = 128.0;
+  static Interval opacityCurve =
+  const Interval(0.0, 0.75, curve: Curves.fastOutSlowIn);
+
+  const RadialExpansionDemo({Key? key}) : super(key: key);
+
+  static RectTween _createRectTween(Rect? begin, Rect? end) {
+    return MaterialRectCenterArcTween(begin: begin, end: end);
+  }
+
+  static Widget _buildPage(BuildContext context, String imageName,
+      String description) {
+    return Container(
+      color: Theme
+          .of(context)
+          .canvasColor,
+      child: Center(
+        child: Card(
+          elevation: 8.0,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: kMaxRadius * 2.0,
+                height: kMaxRadius * 2.0,
+                child: Hero(
+                  createRectTween: _createRectTween,
+                  tag: imageName,
+                  child: RadialExpansion(
+                    maxRadias: kMaxRadius,
+                    child: PhotoHero2(
+                      photo: imageName,
+                      callback: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Text(
+                description,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+                textScaleFactor: 3.0,
+              ),
+              const SizedBox(
+                height: 16.0,
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHero(BuildContext context, String imageName,
+      String description) {
+    return SizedBox(
+      width: kMinRadius * 2.0,
+      height: kMinRadius * 2.0,
+      child: Hero(
+        createRectTween: _createRectTween,
+        tag: imageName,
+        child: RadialExpansion(
+          maxRadias: kMaxRadius,
+          child: PhotoHero2(
+            photo: imageName,
+            callback: () {
+              Navigator.of(context).push(PageRouteBuilder(
+                  pageBuilder: (context, animation, secondrayAnimation) {
+                    return AnimatedBuilder(
+                        animation: animation,
+                        builder: (context, child) {
+                          return Opacity(
+                            opacity: opacityCurve.transform(animation.value),
+                            child: _buildPage(context, imageName, description),
+                          );
+                        });
+                  }));
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // timeDilation = 5.0; // 1.0 is normal animation speed.
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Radial Transition Demo'),
+      ),
+      body: Container(
+        padding: const EdgeInsets.all(32.0),
+        alignment: FractionalOffset.bottomLeft,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildHero(context, 'images/img.png', 'Chair'),
+            _buildHero(context, 'images/myimg.png', 'Binoculars'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+///Staggered
+
+class StaggerAniamtion extends StatelessWidget {
+
+  StaggerAniamtion({super.key, required this.controller})
+      :
+        opacity = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+            parent: controller,
+            curve: const Interval(0.0, 0.100, curve: Curves.ease))),
+        width = Tween(begin: 50.0, end: 150.0).animate(CurvedAnimation(
+            parent: controller,
+            curve: const Interval(0.125, 0.250, curve: Curves.ease))),
+        height = Tween(begin: 50.0, end: 150.0).animate(CurvedAnimation(
+            parent: controller,
+            curve: const Interval(0.250, 0.375, curve: Curves.ease))),
+        padding =EdgeInsetsTween(begin: const EdgeInsets.only(bottom: 16.0),
+            end: const EdgeInsets.only(bottom: 75.0)).animate(
+            CurvedAnimation(parent: controller,
+                curve: const Interval(0.250, 0.375, curve: Curves.ease))
+        ),
+        borderRadius = BorderRadiusTween(
+          begin: BorderRadius.circular(4.0),
+          end: BorderRadius.circular(75.0),
+        ).animate(
+          CurvedAnimation(
+            parent: controller,
+            curve: const Interval(
+              0.375,
+              0.500,
+              curve: Curves.ease,
+            ),
+          ),
+        ),
+        color = ColorTween(
+          begin: Colors.indigo[100],
+          end: Colors.orange[400],
+        ).animate(
+          CurvedAnimation(
+            parent: controller,
+            curve: const Interval(
+              0.500,
+              0.750,
+              curve: Curves.ease,
+            ),
+          ),
+        );
+
+  final Animation<double> controller;
+  final Animation<double> opacity;
+  final Animation<double> width;
+  final Animation<double> height;
+  final Animation<EdgeInsets> padding;
+  final Animation<BorderRadius?> borderRadius;
+  final Animation<Color?> color;
+
+  Widget _buildAnimation(BuildContext context, Widget? child) {
+    return Container(
+      padding: padding.value,
+      alignment: Alignment.bottomCenter,
+      child: Opacity(
+        opacity: opacity.value,
+        child: Container(
+          width: width.value,
+          height: height.value,
+          decoration: BoxDecoration(
+              color: color.value,
+              border: Border.all(color: Colors.indigo[300]!, width: 3.0),
+              borderRadius: borderRadius.value
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(animation: controller, builder:
+    _buildAnimation
+    );
+  }
+
+}
+
+class StaggeredWidget extends StatefulWidget {
+
+  @override
+  State<StatefulWidget> createState() {
+    return StaggredwidgetState();
+  }
+
+}
+
+class StaggredwidgetState extends State<StaggeredWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AnimationController(
+        vsync: this, duration: const Duration(seconds: 2));
+  }
+
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _playAnimation() async {
+    try {
+      await controller
+          .forward()
+          .orCancel;
+      await controller
+          .reverse()
+          .orCancel;
+    } on TickerCanceled {
+
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          _playAnimation();
+        },
+        child: Center(
+          child: Container(
+            width: 300,
+            height: 300,
+            decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.1),
+                border: Border.all(color: Colors.black.withOpacity(0.5))
+            ),
+            child: StaggerAniamtion(controller: controller.view),
+          ),
+        ),
+      ),
+    );
+  }
+
 }
