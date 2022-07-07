@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:developer';
 import 'dart:ffi';
 import 'dart:io';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
+import 'package:provider/provider.dart';
 import 'adaptedemo.dart';
 
 void main() => runApp(const MyApp());
@@ -31,7 +33,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     VisualDensity densityAmt =
-    const VisualDensity(horizontal: 1.0, vertical: 2.0);
+        const VisualDensity(horizontal: 1.0, vertical: 2.0);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -44,9 +46,7 @@ class MyApp extends StatelessWidget {
         // or press Run > Flutter Hot Reload in a Flutter IDE). Notice that the
         // counter didn't reset back to zero; the application is not restarted.
         primarySwatch: Colors.green,
-        visualDensity: Theme
-            .of(context)
-            .visualDensity,
+        visualDensity: Theme.of(context).visualDensity,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -126,10 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               Text(
                 '$_counter',
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .headline4,
+                style: Theme.of(context).textTheme.headline4,
               ),
               Container(
                 height: 40,
@@ -206,7 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Navigator.of(context)
                             .push(MaterialPageRoute(builder: (context) {
                           var pls =
-                          MaterialApp(title: "GridView", home: gridPage);
+                              MaterialApp(title: "GridView", home: gridPage);
                           return MaterialApp(
                             title: "Shopping App",
                             home: pls,
@@ -219,7 +216,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Navigator.of(context)
                             .push(MaterialPageRoute(builder: (context) {
                           var pls =
-                          MaterialApp(title: "GridView", home: listPage);
+                              MaterialApp(title: "GridView", home: listPage);
                           return MaterialApp(
                             title: "Shopping App",
                             home: pls,
@@ -504,6 +501,36 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                   ),
                 ],
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    tooltip: "bottomNav",
+                    icon: const Icon(
+                      Icons.baby_changing_station,
+                      color: Colors.black,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return MyBottomSelct();
+                      }));
+                    },
+                  ),
+                  IconButton(
+                    tooltip: "nofiter",
+                    icon: const Icon(
+                      Icons.notification_add,
+                      color: Colors.black,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return NoProviderTest();
+                      }));
+                    },
+                  ),
+                ],
               )
             ],
           ),
@@ -586,18 +613,17 @@ class ShoppingListItem extends StatelessWidget {
   final bool isCart;
   final CartChangedCallback callback;
 
-  const ShoppingListItem({Key? key,
-    required this.product,
-    required this.isCart,
-    required this.callback})
+  const ShoppingListItem(
+      {Key? key,
+      required this.product,
+      required this.isCart,
+      required this.callback})
       : super(key: key);
 
   Color _getColor(BuildContext context) {
     print('${rootBundle.loadString('assets/config.json')}');
     // _demopackageDemo();
-    return isCart ? Colors.black54 : Theme
-        .of(context)
-        .primaryColor;
+    return isCart ? Colors.black54 : Theme.of(context).primaryColor;
   }
 
   TextStyle? _getTextStyle(BuildContext context) {
@@ -675,24 +701,21 @@ var gridPage = Scaffold(
   body: _buildGrid(),
 );
 
-Widget _buildGrid() =>
-    GridView.count(
-        crossAxisCount: 2,
-        padding: const EdgeInsets.all(4),
-        mainAxisSpacing: 4,
-        crossAxisSpacing: 4,
-        children: _buildGridTileList(30));
+Widget _buildGrid() => GridView.count(
+    crossAxisCount: 2,
+    padding: const EdgeInsets.all(4),
+    mainAxisSpacing: 4,
+    crossAxisSpacing: 4,
+    children: _buildGridTileList(30));
 
 // The images are saved with names pic0.jpg, pic1.jpg...pic29.jpg.
 // The List.generate() constructor allows an easy way to create
 // a list when objects have a predictable naming pattern.
-List<Container> _buildGridTileList(int count) =>
-    List.generate(
-        count,
-            (i) =>
-            Container(
-                child: Image.network(
-                    "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto")));
+List<Container> _buildGridTileList(int count) => List.generate(
+    count,
+    (i) => Container(
+        child: Image.network(
+            "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto")));
 
 var listPage = Scaffold(
   appBar: AppBar(
@@ -867,21 +890,21 @@ Widget _titleSection() {
       children: [
         Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: const Text(
-                    'Oeschinen Lake Campground',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                  ),
-                ),
-                Text(
-                  'Kandersteg, Switzerland',
-                  style: TextStyle(color: Colors.grey[500], fontSize: 20),
-                ),
-              ],
-            )),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: const Text(
+                'Oeschinen Lake Campground',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+            ),
+            Text(
+              'Kandersteg, Switzerland',
+              style: TextStyle(color: Colors.grey[500], fontSize: 20),
+            ),
+          ],
+        )),
         FavoriteWidget(),
         // Icon(
         //   Icons.star,
@@ -927,11 +950,11 @@ Widget textSection = const Padding(
   padding: EdgeInsets.all(32),
   child: Text(
     'Lake Oeschinen lies at the foot of the Blüemlisalp in the Bernese '
-        'Alps. Situated 1,578 meters above sea level, it is one of the '
-        'larger Alpine Lakes. A gondola ride from Kandersteg, followed by a '
-        'half-hour walk through pastures and pine forest, leads you to the '
-        'lake, which warms to 20 degrees Celsius in the summer. Activities '
-        'enjoyed here include rowing, and riding the summer toboggan run.',
+    'Alps. Situated 1,578 meters above sea level, it is one of the '
+    'larger Alpine Lakes. A gondola ride from Kandersteg, followed by a '
+    'half-hour walk through pastures and pine forest, leads you to the '
+    'lake, which warms to 20 degrees Celsius in the summer. Activities '
+    'enjoyed here include rowing, and riding the summer toboggan run.',
     softWrap: true,
   ),
 );
@@ -985,10 +1008,7 @@ Widget _buildAdapteWidget(BuildContext context) {
 enum ScreenSize { Small, Normal, Large, ExtraLarge }
 
 ScreenSize getSize(BuildContext context) {
-  double deviceWidth = MediaQuery
-      .of(context)
-      .size
-      .shortestSide;
+  double deviceWidth = MediaQuery.of(context).size.shortestSide;
   if (deviceWidth > 900) return ScreenSize.ExtraLarge;
   return ScreenSize.Small;
 }
@@ -1026,9 +1046,9 @@ class TextStyles {
     fontFamily: Fonts.raleway,
   );
   static const TextStyle buttonText1 =
-  TextStyle(fontWeight: FontWeight.bold, fontSize: 14);
+      TextStyle(fontWeight: FontWeight.bold, fontSize: 14);
   static TextStyle buttonText2 =
-  TextStyle(fontWeight: FontWeight.normal, fontSize: 11);
+      TextStyle(fontWeight: FontWeight.normal, fontSize: 11);
   static TextStyle h1 = TextStyle(fontWeight: FontWeight.bold, fontSize: 22);
   static TextStyle h2 = TextStyle(fontWeight: FontWeight.bold, fontSize: 16);
   static late TextStyle body1 = raleway.copyWith(color: Color(0xFF42A5F5));
@@ -1036,8 +1056,7 @@ class TextStyles {
 }
 
 ///自定义ScrollListener
-Widget scrollLis() =>
-    Listener(
+Widget scrollLis() => Listener(
       onPointerSignal: (evesnt) {
         if (evesnt is PointerScrollEvent) print(evesnt.scrollDelta.dy);
       },
@@ -1080,33 +1099,31 @@ class _BasicActionDetectorState extends State<BasicActionDetector> {
 */
 
 ///Tab
-Widget _focusGroup() =>
-    Column(
+Widget _focusGroup() => Column(
       children: [
         FocusTraversalGroup(
             child: Column(
-              children: const [
-                Text("Groupchild1"),
-                Text("Groupchild2"),
-                Text("Groupchild3"),
-              ],
-            )),
+          children: const [
+            Text("Groupchild1"),
+            Text("Groupchild2"),
+            Text("Groupchild3"),
+          ],
+        )),
       ],
     );
 
 ///KEYBOARD
-Widget _keyboardListen() =>
-    Focus(
+Widget _keyboardListen() => Focus(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 400, minHeight: 30),
-          child: const TextField(
-            decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red, width: 2),
-                  borderRadius: BorderRadius.all(Radius.circular(2)),
-                )),
-          ),
-        ));
+      constraints: const BoxConstraints(maxWidth: 400, minHeight: 30),
+      child: const TextField(
+        decoration: InputDecoration(
+            border: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.red, width: 2),
+          borderRadius: BorderRadius.all(Radius.circular(2)),
+        )),
+      ),
+    ));
 
 ///shortcuts
 // Define a class for each type of shortcut action you want
@@ -1119,7 +1136,7 @@ Widget _buildshortcut(BuildContext context) {
     // Bind intents to key combinations Control+N
     shortcuts: <ShortcutActivator, Intent>{
       SingleActivator(LogicalKeyboardKey.keyN, control: true):
-      CreateNewItemIntent(),
+          CreateNewItemIntent(),
     },
     child: Actions(
       // Bind intents to an actual method in your code
@@ -1140,7 +1157,7 @@ Widget _buildshortcut(BuildContext context) {
 
 var globalLis = <ShortcutActivator, Intent>{
   const SingleActivator(LogicalKeyboardKey.keyA, control: true):
-  const CreateNewItemIntent(),
+      const CreateNewItemIntent(),
 };
 
 ///全局监听快捷键，不知如何使用
@@ -1158,9 +1175,7 @@ void dispose() {
 
 ///监听是否按下
 bool isKeyDown(Set<LogicalKeyboardKey> keys) {
-  return keys
-      .intersection(RawKeyboard.instance.keysPressed)
-      .isNotEmpty;
+  return keys.intersection(RawKeyboard.instance.keysPressed).isNotEmpty;
 }
 
 void _handleKey(event) {
@@ -1297,7 +1312,8 @@ abstract class Example extends StatelessWidget {
 //////////////////////////////////////////////////
 
 class FlutterLayoutArticle extends StatefulWidget {
-  const FlutterLayoutArticle(this.examples, {
+  const FlutterLayoutArticle(
+    this.examples, {
     super.key,
   });
 
@@ -1366,7 +1382,7 @@ class _FlutterLayoutArticleState extends State<FlutterLayoutArticle> {
                             Container(
                               width: 58,
                               padding:
-                              const EdgeInsets.only(left: 4.0, right: 4.0),
+                                  const EdgeInsets.only(left: 4.0, right: 4.0),
                               child: button(i + 1),
                             ),
                         ],
@@ -2133,7 +2149,7 @@ class Example24 extends Example {
           color: red,
           child: const Text(
             'This is a very long text that '
-                'won\'t fit the line.',
+            'won\'t fit the line.',
             style: big,
           ),
         ),
@@ -2452,9 +2468,9 @@ class _TapboxCState extends State<TapboxC> {
           color: widget.active ? Colors.lightGreen[700] : Colors.grey[600],
           border: _highlight
               ? Border.all(
-            color: Colors.teal[700]!,
-            width: 10.0,
-          )
+                  color: Colors.teal[700]!,
+                  width: 10.0,
+                )
               : null,
         ),
       ),
@@ -2483,8 +2499,7 @@ class _FadeInDemoState extends State<FadeInDemo> {
             Image.network(
                 'https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto'),
             TextButton(
-                onPressed: () =>
-                    setState(() {
+                onPressed: () => setState(() {
                       opacity = 1;
                     }),
                 child: const Text(
@@ -2562,8 +2577,7 @@ class _AnimatedContainerDemoState extends State<AnimatedContainerDemo> {
             ),
             ElevatedButton(
               child: const Text('change'),
-              onPressed: () =>
-              {
+              onPressed: () => {
                 setState(() {
                   color = randomColor();
                   borderRadius = randomBorderRadius();
@@ -2649,7 +2663,8 @@ class _LogoAppState2 extends State<LogoApp2>
         } else if (status == AnimationStatus.dismissed) {
           controller.forward();
         }
-      })..addStatusListener((status) {
+      })
+      ..addStatusListener((status) {
         print("$status");
       });
     controller.forward();
@@ -2763,10 +2778,11 @@ class _LogoApp3State extends State<LogoApp3>
 
 ///Hero Widget.
 class PhotoHero extends StatelessWidget {
-  const PhotoHero({Key? key,
-    required this.photo,
-    required this.callback,
-    required this.width})
+  const PhotoHero(
+      {Key? key,
+      required this.photo,
+      required this.callback,
+      required this.width})
       : super(key: key);
 
   final String photo;
@@ -2842,10 +2858,7 @@ class PhotoHero2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Theme
-          .of(context)
-          .primaryColor
-          .withOpacity(0.25),
+      color: Theme.of(context).primaryColor.withOpacity(0.25),
       child: InkWell(
         onTap: callback,
         child: Image.asset(
@@ -2858,14 +2871,15 @@ class PhotoHero2 extends StatelessWidget {
 }
 
 class RadialExpansion extends StatelessWidget {
-  const RadialExpansion(
-      { super.key, required this.maxRadias, required this.child,})
-      : clipRectSize = 2.0 * (maxRadias / math.sqrt2);
+  const RadialExpansion({
+    super.key,
+    required this.maxRadias,
+    required this.child,
+  }) : clipRectSize = 2.0 * (maxRadias / math.sqrt2);
 
   final double maxRadias;
   final double clipRectSize;
   final Widget child;
-
 
   @override
   Widget build(BuildContext context) {
@@ -2885,7 +2899,7 @@ class RadialExpansionDemo extends StatelessWidget {
   static double kMinRadius = 32.0;
   static double kMaxRadius = 128.0;
   static Interval opacityCurve =
-  const Interval(0.0, 0.75, curve: Curves.fastOutSlowIn);
+      const Interval(0.0, 0.75, curve: Curves.fastOutSlowIn);
 
   const RadialExpansionDemo({Key? key}) : super(key: key);
 
@@ -2893,12 +2907,10 @@ class RadialExpansionDemo extends StatelessWidget {
     return MaterialRectCenterArcTween(begin: begin, end: end);
   }
 
-  static Widget _buildPage(BuildContext context, String imageName,
-      String description) {
+  static Widget _buildPage(
+      BuildContext context, String imageName, String description) {
     return Container(
-      color: Theme
-          .of(context)
-          .canvasColor,
+      color: Theme.of(context).canvasColor,
       child: Center(
         child: Card(
           elevation: 8.0,
@@ -2937,8 +2949,8 @@ class RadialExpansionDemo extends StatelessWidget {
     );
   }
 
-  Widget _buildHero(BuildContext context, String imageName,
-      String description) {
+  Widget _buildHero(
+      BuildContext context, String imageName, String description) {
     return SizedBox(
       width: kMinRadius * 2.0,
       height: kMinRadius * 2.0,
@@ -2952,15 +2964,15 @@ class RadialExpansionDemo extends StatelessWidget {
             callback: () {
               Navigator.of(context).push(PageRouteBuilder(
                   pageBuilder: (context, animation, secondrayAnimation) {
-                    return AnimatedBuilder(
-                        animation: animation,
-                        builder: (context, child) {
-                          return Opacity(
-                            opacity: opacityCurve.transform(animation.value),
-                            child: _buildPage(context, imageName, description),
-                          );
-                        });
-                  }));
+                return AnimatedBuilder(
+                    animation: animation,
+                    builder: (context, child) {
+                      return Opacity(
+                        opacity: opacityCurve.transform(animation.value),
+                        child: _buildPage(context, imageName, description),
+                      );
+                    });
+              }));
             },
           ),
         ),
@@ -2994,10 +3006,8 @@ class RadialExpansionDemo extends StatelessWidget {
 ///Staggered
 
 class StaggerAniamtion extends StatelessWidget {
-
   StaggerAniamtion({super.key, required this.controller})
-      :
-        opacity = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+      : opacity = Tween(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: controller,
             curve: const Interval(0.0, 0.100, curve: Curves.ease))),
         width = Tween(begin: 50.0, end: 150.0).animate(CurvedAnimation(
@@ -3006,11 +3016,12 @@ class StaggerAniamtion extends StatelessWidget {
         height = Tween(begin: 50.0, end: 150.0).animate(CurvedAnimation(
             parent: controller,
             curve: const Interval(0.250, 0.375, curve: Curves.ease))),
-        padding =EdgeInsetsTween(begin: const EdgeInsets.only(bottom: 16.0),
-            end: const EdgeInsets.only(bottom: 75.0)).animate(
-            CurvedAnimation(parent: controller,
-                curve: const Interval(0.250, 0.375, curve: Curves.ease))
-        ),
+        padding = EdgeInsetsTween(
+                begin: const EdgeInsets.only(bottom: 16.0),
+                end: const EdgeInsets.only(bottom: 75.0))
+            .animate(CurvedAnimation(
+                parent: controller,
+                curve: const Interval(0.250, 0.375, curve: Curves.ease))),
         borderRadius = BorderRadiusTween(
           begin: BorderRadius.circular(4.0),
           end: BorderRadius.circular(75.0),
@@ -3058,8 +3069,7 @@ class StaggerAniamtion extends StatelessWidget {
           decoration: BoxDecoration(
               color: color.value,
               border: Border.all(color: Colors.indigo[300]!, width: 3.0),
-              borderRadius: borderRadius.value
-          ),
+              borderRadius: borderRadius.value),
         ),
       ),
     );
@@ -3067,20 +3077,15 @@ class StaggerAniamtion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(animation: controller, builder:
-    _buildAnimation
-    );
+    return AnimatedBuilder(animation: controller, builder: _buildAnimation);
   }
-
 }
 
 class StaggeredWidget extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() {
     return StaggredwidgetState();
   }
-
 }
 
 class StaggredwidgetState extends State<StaggeredWidget>
@@ -3090,10 +3095,9 @@ class StaggredwidgetState extends State<StaggeredWidget>
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-        vsync: this, duration: const Duration(seconds: 2));
+    controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2));
   }
-
 
   @override
   void dispose() {
@@ -3103,15 +3107,9 @@ class StaggredwidgetState extends State<StaggeredWidget>
 
   Future<void> _playAnimation() async {
     try {
-      await controller
-          .forward()
-          .orCancel;
-      await controller
-          .reverse()
-          .orCancel;
-    } on TickerCanceled {
-
-    }
+      await controller.forward().orCancel;
+      await controller.reverse().orCancel;
+    } on TickerCanceled {}
   }
 
   @override
@@ -3129,13 +3127,130 @@ class StaggredwidgetState extends State<StaggeredWidget>
             height: 300,
             decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.1),
-                border: Border.all(color: Colors.black.withOpacity(0.5))
-            ),
+                border: Border.all(color: Colors.black.withOpacity(0.5))),
             child: StaggerAniamtion(controller: controller.view),
           ),
         ),
       ),
     );
   }
+}
 
+///shortcut actions
+// class ShortCutWidgetDemo extends StatelessWidget{
+//   @override
+//   Widget build(BuildContext context) {
+//     return Shortcuts(shortcuts: {
+//       LogicalKeySet(LogicalKeyboardKey.control,LogicalKeyboardKey.keyA):
+//           SelectAllIntent();
+//     }, child: Actions(
+//       dispatcher: LogginActionDispatcher(),
+//         actions: {
+//       SelectALlIntent:SelectAllAction(model),
+//     }, child: Builder(
+//       builder: (context)=>TextButton(onPressed: Actions.handler(context, SelectAllIntent()), child: Text("Select All")),
+//     )));
+//   }
+//
+// }
+
+class LoggingShortcutManager extends ShortcutManager {
+  @override
+  KeyEventResult handleKeypress(BuildContext context, RawKeyEvent event) {
+    final KeyEventResult result = super.handleKeypress(context, event);
+    if (result == KeyEventResult.handled) {
+      print("handled $event in $context");
+    }
+    return result;
+  }
+}
+// class SelectAllIntent extends Action<SelectAllIntent>{
+//   late final Model model;
+//   @override
+//   void invoke(SelectAllIntent intent) {
+//     model.selectAll();
+//   }
+//
+// }
+///focus
+
+///状态底部
+class MyBottomSelct extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _MyBottomSelctState();
+  }
+}
+
+class _MyBottomSelctState extends State<MyBottomSelct> {
+  int _select = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.access_alarm), label: "HOME"),
+        BottomNavigationBarItem(icon: Icon(Icons.safety_check), label: "My"),
+      ],
+      onTap: (select) {
+        setState(() {
+          _select = select;
+          print("select $select");
+        });
+      },
+    );
+  }
+}
+
+///ChangeNotifier
+///
+class CartModel extends ChangeNotifier {
+  final List<Item> _items = [];
+
+  UnmodifiableListView<Item> get items => UnmodifiableListView(_items);
+
+  int get toalPrice => _items.length * 42;
+
+  void add(Item item) {
+    _items.add(item);
+    notifyListeners();
+  }
+
+  void removeAll() {
+    _items.clear();
+    notifyListeners();
+  }
+}
+
+class Item {}
+
+class NoProviderTest extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(),
+        body: ChangeNotifierProvider(
+          create: (context) => CartModel(),
+          child: Consumer<CartModel>(
+            builder: (context, cart, child) {
+              return Column(
+                children: [
+                  Text("Total price: ${cart.toalPrice}"),
+                  IconButton(
+                      onPressed: () {
+                        cart.add(Item());
+                      },
+                      icon: const Icon(Icons.add)),
+                  IconButton(
+                      onPressed: () {
+                        Provider.of<CartModel>(context, listen: false)
+                            .removeAll();
+                      },
+                      icon: const Icon(Icons.remove))
+                ],
+              );
+            },
+          ),
+        ));
+  }
 }
