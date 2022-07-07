@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:ffi';
 import 'dart:io';
@@ -10,6 +11,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'dart:math' as math;
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 import 'adaptedemo.dart';
 
 void main() => runApp(const MyApp());
@@ -528,6 +530,19 @@ class _MyHomePageState extends State<MyHomePage> {
                           .push(MaterialPageRoute(builder: (context) {
                         return NoProviderTest();
                       }));
+                    },
+                  ),
+                  IconButton(
+                    tooltip: "network",
+                    icon: const Icon(
+                      Icons.notification_add,
+                      color: Colors.black,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                        return NetworkTestWidget();
+                      }));
+
                     },
                   ),
                 ],
@@ -3253,4 +3268,53 @@ class NoProviderTest extends StatelessWidget {
           ),
         ));
   }
+}
+//network
+Future<http.Response> fetchAlbum(){
+  return http.get(Uri.parse("https://jsonplaceholder.typicode.com/albums/1"));
+}
+Future<Album> fetchAlbums() async{
+  final response = await http.get(Uri.parse("https://jsonplaceholder.typicode.com/albums/1"));
+  if(response.statusCode == 200){
+    final ablum =  Album.fromJson(jsonDecode(response.body));
+    print(ablum.title);
+    return ablum;
+  }else{
+    throw Exception("fail to load album");
+  }
+}
+class Album{
+  final int userId;
+  final int id;
+  final String title;
+
+  Album(this.userId, this.id, this.title);
+  factory Album.fromJson(Map<String,dynamic> json){
+    return Album(json['userId'], json['id'], json['title']);
+  }
+}
+class NetworkTestWidget extends StatefulWidget{
+  @override
+  State<StatefulWidget> createState() {
+    return NetworkTestState();
+  }
+
+}
+class NetworkTestState extends State<NetworkTestWidget>{
+  late Future<Album> futureAlbum;
+  @override
+  void initState() {
+    super.initState();
+    futureAlbum = fetchAlbums();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title:Text("hello")),
+      body: IconButton(icon: Icon(Icons.abc),onPressed: (){
+
+      },),
+    );
+  }
+
 }
