@@ -539,10 +539,22 @@ class _MyHomePageState extends State<MyHomePage> {
                       color: Colors.black,
                     ),
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
                         return NetworkTestWidget();
                       }));
-
+                    },
+                  ),IconButton(
+                    tooltip: "isolate",
+                    icon: const Icon(
+                      Icons.notification_add,
+                      color: Colors.black,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return IsolateWidget();
+                      }));
                     },
                   ),
                 ],
@@ -3269,52 +3281,143 @@ class NoProviderTest extends StatelessWidget {
         ));
   }
 }
-//network
-Future<http.Response> fetchAlbum(){
+
+///network
+Future<http.Response> fetchAlbum() {
   return http.get(Uri.parse("https://jsonplaceholder.typicode.com/albums/1"));
 }
-Future<Album> fetchAlbums() async{
-  final response = await http.get(Uri.parse("https://jsonplaceholder.typicode.com/albums/1"));
-  if(response.statusCode == 200){
-    final ablum =  Album.fromJson(jsonDecode(response.body));
+
+Future<Album> fetchAlbums() async {
+  final response = await http.get(
+      Uri.parse("https://jsonplaceholder.typicode.com/albums/1"),
+      headers: {
+        HttpHeaders.authorizationHeader: 'token',
+      });
+  if (response.statusCode == 200) {
+    final ablum = Album.fromJson(jsonDecode(response.body));
     print(ablum.title);
     return ablum;
-  }else{
+  } else {
     throw Exception("fail to load album");
   }
 }
-class Album{
+
+class Album {
   final int userId;
   final int id;
   final String title;
 
   Album(this.userId, this.id, this.title);
-  factory Album.fromJson(Map<String,dynamic> json){
+
+  factory Album.fromJson(Map<String, dynamic> json) {
     return Album(json['userId'], json['id'], json['title']);
   }
 }
-class NetworkTestWidget extends StatefulWidget{
+
+class NetworkTestWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return NetworkTestState();
   }
-
 }
-class NetworkTestState extends State<NetworkTestWidget>{
+
+class NetworkTestState extends State<NetworkTestWidget> {
   late Future<Album> futureAlbum;
+
   @override
   void initState() {
     super.initState();
     futureAlbum = fetchAlbums();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title:Text("hello")),
-      body: IconButton(icon: Icon(Icons.abc),onPressed: (){
-
-      },),
+      appBar: AppBar(title: Text("hello")),
+      body: Column(
+        children: [
+          IconButton(
+            icon: Icon(Icons.abc),
+            onPressed: () {},
+          ),
+          FutureBuilder<Album>(
+              future: futureAlbum,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text(snapshot.data!.title);
+                } else if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                }
+                return const CircularProgressIndicator();
+              })
+        ],
+      ),
     );
   }
+}
 
+Future<http.Response> fetchPhotos(http.Client client) {
+  return client.get(Uri.parse('https://jsonplaceholder.typicode.com/photos'));
+}
+
+class Photo {
+  final int albumId;
+  final int id;
+  final String title;
+  final String url;
+  final String thumbnailUrl;
+
+  Photo(this.albumId, this.id, this.title, this.url, this.thumbnailUrl);
+
+  factory Photo.fromJson(Map<String, dynamic> json) {
+    return Photo(json['albumId'], json['id'], json['title'], json['url'],
+        json['thumbnailUrl']);
+  }
+}
+
+List<Photo> parsePhotos(String responseBody) {
+  final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
+  return parsed.map<Photo>((json) => Photo.fromJson(json)).toList();
+}
+
+Future<List<Photo>> fetchPhotos2(http.Client client) async {
+  final response = await client
+      .get(Uri.parse('https://jsonplaceholder.typicode.com/photos'));
+  // return parsePhotos(response.body);
+  return compute(parsePhotos, response.body);
+}
+
+class IsolateWidget extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Isolate Demo',
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("isolate demo"),
+        ),
+        body: FutureBuilder<List<Photo>>(
+            future: fetchPhotos2(http.Client()),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text("error:${snapshot.error}");
+              } else if (snapshot.hasData) {
+                var photos = snapshot.data;
+                return GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                    ),
+                    itemCount: photos?.length,
+                    itemBuilder: (context, index) {
+                      return Image.network(photos![index].thumbnailUrl);
+                    });
+              } else {
+                return CircularProgressIndicator();
+              }
+            }),
+      ),
+    );
+  }
 }
