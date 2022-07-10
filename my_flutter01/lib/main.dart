@@ -556,6 +556,18 @@ class _MyHomePageState extends State<MyHomePage> {
                         return IsolateWidget();
                       }));
                     },
+                  ),IconButton(
+                    tooltip: "post",
+                    icon: const Icon(
+                      Icons.notification_add,
+                      color: Colors.black,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return PostTextWidget();
+                      }));
+                    },
                   ),
                 ],
               )
@@ -3420,4 +3432,64 @@ class IsolateWidget extends StatelessWidget {
       ),
     );
   }
+}
+///post
+Future<Album> createAlbum(String title) async{
+  final response = await http.post(
+    Uri.parse("https://jsonplaceholder.typicode.com/albums"),
+    headers: <String,String>{
+      'Content-Type':"application/json;charset=UTF-8",
+    },
+    body: jsonEncode(<String,String>{
+      'title':title,
+    })
+  );
+  if(response.statusCode==201){
+    return Album.fromJson(jsonDecode(response.body));
+  }else{
+    throw Exception("fail to create");
+  }
+}
+class PostTextWidget extends StatefulWidget{
+
+
+  @override
+  State<StatefulWidget> createState() {
+    return PostTestWidgetState();
+  }
+}
+class PostTestWidgetState extends State<PostTextWidget>{
+  final TextEditingController _controller = TextEditingController();
+  Future<Album>? _futureAlbum;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title:Text("post")),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TextField(
+            controller: _controller,
+            decoration: InputDecoration(
+              hintText: 'Enter Title',
+            ),
+          ),
+          ElevatedButton(onPressed: (){
+            setState((){
+              _futureAlbum = createAlbum(_controller.text);
+            });
+          }, child: Text("Create Data")),
+          FutureBuilder<Album>(builder: (context,snapshot){
+            if(snapshot.hasData){
+              return Text(snapshot.data!.title);
+            }else if(snapshot.hasError){
+              return Text("${snapshot.error}");
+            }
+            return CircularProgressIndicator();
+          },future: _futureAlbum,)
+        ],
+      ),
+    );
+  }
+
 }
