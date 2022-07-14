@@ -9,10 +9,17 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'dart:math' as math;
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:video_player/video_player.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'adaptedemo.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:camera/camera.dart';
 
 void main() => runApp(const MyApp());
 // void main() => runApp(MyListApp);
@@ -544,7 +551,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         return NetworkTestWidget();
                       }));
                     },
-                  ),IconButton(
+                  ),
+                  IconButton(
                     tooltip: "isolate",
                     icon: const Icon(
                       Icons.notification_add,
@@ -556,7 +564,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         return IsolateWidget();
                       }));
                     },
-                  ),IconButton(
+                  ),
+                  IconButton(
                     tooltip: "post",
                     icon: const Icon(
                       Icons.notification_add,
@@ -566,6 +575,62 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.of(context)
                           .push(MaterialPageRoute(builder: (context) {
                         return PostTextWidget();
+                      }));
+                    },
+                  ),
+                  IconButton(
+                    tooltip: "socket",
+                    icon: const Icon(
+                      Icons.social_distance,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return SocketTestWidget();
+                      }));
+                    },
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    tooltip: "sqlite",
+                    icon: const Icon(
+                      Icons.data_object,
+                      color: Colors.blueAccent,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return SqliteTestWidget(
+                          fileTest: FileTest(),
+                        );
+                      }));
+                    },
+                  ),IconButton(
+                    tooltip: "video",
+                    icon: const Icon(
+                      Icons.play_arrow,
+                      color: Colors.blueAccent,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return VideoPlayerTestWidget();
+                      }));
+                    },
+                  ),IconButton(
+                    tooltip: "camera",
+                    icon: const Icon(
+                      Icons.camera,
+                      color: Colors.black38,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return CameraTestWidget();
                       }));
                     },
                   ),
@@ -3400,7 +3465,6 @@ Future<List<Photo>> fetchPhotos2(http.Client client) async {
 }
 
 class IsolateWidget extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -3433,38 +3497,39 @@ class IsolateWidget extends StatelessWidget {
     );
   }
 }
+
 ///post
-Future<Album> createAlbum(String title) async{
-  final response = await http.post(
-    Uri.parse("https://jsonplaceholder.typicode.com/albums"),
-    headers: <String,String>{
-      'Content-Type':"application/json;charset=UTF-8",
-    },
-    body: jsonEncode(<String,String>{
-      'title':title,
-    })
-  );
-  if(response.statusCode==201){
+Future<Album> createAlbum(String title) async {
+  final response =
+      await http.post(Uri.parse("https://jsonplaceholder.typicode.com/albums"),
+          headers: <String, String>{
+            'Content-Type': "application/json;charset=UTF-8",
+          },
+          body: jsonEncode(<String, String>{
+            'title': title,
+          }));
+  if (response.statusCode == 201) {
     return Album.fromJson(jsonDecode(response.body));
-  }else{
+  } else {
     throw Exception("fail to create");
   }
 }
-class PostTextWidget extends StatefulWidget{
 
-
+class PostTextWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return PostTestWidgetState();
   }
 }
-class PostTestWidgetState extends State<PostTextWidget>{
+
+class PostTestWidgetState extends State<PostTextWidget> {
   final TextEditingController _controller = TextEditingController();
   Future<Album>? _futureAlbum;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title:Text("post")),
+      appBar: AppBar(title: Text("post")),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -3474,22 +3539,359 @@ class PostTestWidgetState extends State<PostTextWidget>{
               hintText: 'Enter Title',
             ),
           ),
-          ElevatedButton(onPressed: (){
-            setState((){
-              _futureAlbum = createAlbum(_controller.text);
-            });
-          }, child: Text("Create Data")),
-          FutureBuilder<Album>(builder: (context,snapshot){
-            if(snapshot.hasData){
-              return Text(snapshot.data!.title);
-            }else if(snapshot.hasError){
-              return Text("${snapshot.error}");
-            }
-            return CircularProgressIndicator();
-          },future: _futureAlbum,)
+          ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _futureAlbum = createAlbum(_controller.text);
+                });
+              },
+              child: Text("Create Data")),
+          FutureBuilder<Album>(
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text(snapshot.data!.title);
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
+              return CircularProgressIndicator();
+            },
+            future: _futureAlbum,
+          )
         ],
       ),
     );
+  }
+}
+
+///Socket StreamBuilder
+
+final channel =
+    WebSocketChannel.connect(Uri.parse("wss://echo.websocket.events"));
+
+class SocketTestWidget extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return SocketTestState();
+  }
+}
+
+class SocketTestState extends State<SocketTestWidget> {
+  TextEditingController _controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("socket")),
+      body: Column(
+        children: [
+          TextField(
+            controller: _controller,
+            decoration: InputDecoration(hintText: "输入发送的内容："),
+          ),
+          ElevatedButton(
+              onPressed: () {
+                channel.sink.add(_controller.text);
+              },
+              child: Text("发送")),
+          StreamBuilder(
+              stream: channel.stream,
+              builder: (context, snapshot) {
+                //没次收到消息都rebuild
+                return Text(snapshot.hasData ? '${snapshot.data}' : '');
+              })
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    channel.sink.close();
+    _controller.dispose();
+    super.dispose();
+  }
+}
+
+///sqlite
+///
+class Dog {
+  final int id;
+  final String name;
+  final int age;
+
+  Dog(this.id, this.name, this.age);
+
+  Map<String, dynamic> toMap() {
+    return {"id": id, "name": name, "age": age};
+  }
+
+  @override
+  String toString() {
+    return "Dog {id:$id,name:$name,age:$age}";
+  }
+}
+
+void testsq() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final database = openDatabase(
+    join(await getDatabasesPath(), 'doggie_database.db'),
+    onCreate: (db, version) {
+      return db.execute(
+        'CREATE TABLE dogs(id INTEGER PRIMARY KEY, name TEXT,age INTEGER)',
+      );
+    },
+    version: 1,
+  );
+
+  ///insert
+  Future<void> insertDog(Dog dog) async {
+    final db = await database;
+    await db.insert('dogs', dog.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  var fido = Dog(1, 'Fido', 2);
+  await insertDog(fido);
+
+  ///query
+  Future<List<Dog>> dogs() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('dogs');
+    return List.generate(maps.length, (index) {
+      return Dog(maps[index]['id'], maps[index]['name'], maps[index]['age']);
+    });
+  }
+
+  ///update
+  Future<void> updateDog(Dog dog) async {
+    final db = await database;
+    await db.update('dogs', dog.toMap(), where: 'id=?', whereArgs: [dog.id]);
+  }
+
+  fido = Dog(fido.id, fido.name, fido.age + 7);
+  await updateDog(fido);
+
+  ///delete
+  Future<void> deleteDog(int id) async {
+    final db = await database;
+    await db.delete('dogs', where: "id = ?", whereArgs: [id]);
+  }
+
+  await deleteDog(fido.id);
+}
+
+///sqlite和文件读写、SP放一起
+class SqliteTestWidget extends StatefulWidget {
+  final FileTest fileTest;
+
+  const SqliteTestWidget({super.key, required this.fileTest});
+
+  @override
+  State<StatefulWidget> createState() {
+    return SqliteTestState();
+  }
+}
+
+class SqliteTestState extends State<SqliteTestWidget> {
+  int _counter = 0;
+  int _countersp = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.fileTest.readCounter().then((value) => {_counter = value});
+  }
+
+  ///SharedPreference
+  Future<int> spread() async {
+    final prefs = await SharedPreferences.getInstance();
+    final counter = prefs.getInt("counter") ?? 0;
+    return counter;
+  }
+
+  Future<void> spwrite() async {
+    final prefs = await SharedPreferences.getInstance();
+    int counter = await spread();
+    counter++;
+    prefs.setInt("counter", counter);
+    setState(() {
+      _countersp = counter;
+    });
+  }
+
+  void spremove() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove("counter");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("数据库的操作"),
+      ),
+      body: Column(
+        children: [
+          Text("sqlite tapped $_counter times"),
+          ElevatedButton(
+              onPressed: () {
+                testsq();
+              },
+              child: Text("点击操作sqlite")),
+          Text("File数据 tapped $_counter times"),
+          ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _counter++;
+                  widget.fileTest.writeCounter(_counter);
+                });
+              },
+              child: Text("点击操作文件")),
+          Text("Sp数据 tapped $_countersp times"),
+          ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  spwrite();
+                });
+              },
+              child: Text("点击操作SP")),
+        ],
+      ),
+    );
+  }
+}
+
+///文件访问
+///
+class FileTest {
+  Future<String> get _localPath async {
+    final dire = await getApplicationDocumentsDirectory();
+    return dire.path;
+  }
+
+  Future<File> get _localFile async {
+    final path = await _localPath;
+    return File("$path/counter.txt");
+  }
+
+  Future<File> writeCounter(int counter) async {
+    final file = await _localFile;
+
+    // Write the file
+    return file.writeAsString('$counter');
+  }
+
+  Future<int> readCounter() async {
+    try {
+      final file = await _localFile;
+      // Read the file
+      final contents = await file.readAsString();
+      return int.parse(contents);
+    } catch (e) {
+      // If encountering an error, return 0
+      return 0;
+    }
+  }
+}
+
+///VideoPlayer
+class VideoPlayerTestWidget extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return VideoPlayerTestState();
+  }
+}
+
+class VideoPlayerTestState extends State<VideoPlayerTestWidget> {
+  late VideoPlayerController _controller;
+  late Future<void> _initializeVideoPlayerFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.network(
+        "https://imgqa.uni.changan.com.cn/uni-stars-manager/apk/4.mp4");
+    _initializeVideoPlayerFuture = _controller.initialize();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Videoplayer"),
+      ),
+      body: FutureBuilder(
+        future: _initializeVideoPlayerFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return AspectRatio(
+              aspectRatio: _controller.value.aspectRatio,
+              child: VideoPlayer(_controller),
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          // Wrap the play or pause in a call to `setState`. This ensures the
+          // correct icon is shown.
+          setState(() {
+            // If the video is playing, pause it.
+            if (_controller.value.isPlaying) {
+              _controller.pause();
+            } else {
+              // If the video is paused, play it.
+              _controller.play();
+            }
+          });
+        },
+        child: Icon(_controller.value.isPlaying ? Icons.pause : Icons.play_arrow),
+      ),
+    );
+  }
+}
+
+
+
+///Camera
+///
+class CameraTestWidget extends StatefulWidget{
+  late CameraDescription camera;
+  @override
+  State<StatefulWidget> createState() {
+    return CameraTestWidgetState();
+  }
+
+}
+
+class CameraTestWidgetState extends State<CameraTestWidget>{
+  late CameraController _controller;
+  late Future<void> _initializeControllerFuture;
+  @override
+  void initState() {
+    super.initState();
+    _controller = CameraController(widget.camera, ResolutionPreset.medium);
+    _initializeControllerFuture = _controller.initialize();
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _controller.dispose();
+    super.dispose();
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 
 }
