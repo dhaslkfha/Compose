@@ -21,19 +21,21 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:camera/camera.dart';
 
-// void main() => runApp(const MyApp());
+import 'battery.dart';
+
+void main() => runApp(const MyApp());
 
 ///照相
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final camera = await availableCameras();
-
-  final firtCamera = camera.first;
-  runApp(MaterialApp(
-    title: "Camera",
-    home: CameraTestWidget(camera: firtCamera),
-  ));
-}
+// Future<void> main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   final camera = await availableCameras();
+//
+//   final firtCamera = camera.first;
+//   runApp(MaterialApp(
+//     title: "Camera",
+//     home: CameraTestWidget(camera: firtCamera),
+//   ));
+// }
 // void main() => runApp(MyListApp);
 
 var MyListApp = const MaterialApp(
@@ -645,6 +647,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.of(context)
                           .push(MaterialPageRoute(builder: (context) {
                         return Container();
+                      }));
+                    },
+                  ),IconButton(
+                    tooltip: "battery",
+                    icon: const Icon(
+                      Icons.camera,
+                      color: Colors.black38,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return MyBatteryWidget();
                       }));
                     },
                   ),
