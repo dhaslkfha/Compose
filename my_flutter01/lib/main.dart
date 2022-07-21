@@ -14,6 +14,7 @@ import 'dart:math' as math;
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'adaptedemo.dart';
@@ -22,6 +23,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:camera/camera.dart';
 
 import 'battery.dart';
+import 'mylocation.dart';
 
 void main() => runApp(const MyApp());
 
@@ -652,7 +654,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),IconButton(
                     tooltip: "battery",
                     icon: const Icon(
-                      Icons.camera,
+                      Icons.battery_0_bar,
                       color: Colors.black38,
                     ),
                     onPressed: () {
@@ -661,9 +663,49 @@ class _MyHomePageState extends State<MyHomePage> {
                         return MyBatteryWidget();
                       }));
                     },
+                  ),IconButton(
+                    tooltip: "原生view",
+                    icon: const Icon(
+                      Icons.view_agenda,
+                      color: Colors.green,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return WAndroidViewWidget();
+                      }));
+                    },
+                  ),IconButton(
+                    tooltip: "url launcher",
+                    icon: const Icon(
+                      Icons.launch,
+                      color: Colors.redAccent,
+                    ),
+                    onPressed: () async{
+                      if(!await launchUrl(Uri.parse("https://flutter.dev"))){
+                        throw 'Could not lunche';
+                      }
+
+                    },
                   ),
                 ],
-              )
+              ),
+
+              Row(children: [
+                IconButton(
+                  tooltip: "location",
+                  icon: const Icon(
+                    Icons.location_city,
+                    color: Colors.blueAccent,
+                  ),
+                  onPressed: () async{
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                      return MyLocationWidget();
+                    }));
+                  },
+                ),
+
+              ],),
             ],
           ),
         ),
