@@ -13,7 +13,7 @@ class MyBatteryWidget extends StatefulWidget {
 }
 
 class MyBatteryWidgetState extends State<MyBatteryWidget> {
-  static const platform = MethodChannel('samples.flutter.dev/battery');
+  static const platform = MethodChannel("samples.flutter.dev/battery");
 
   String _batteryLevel = "Unknown battery level";
 
