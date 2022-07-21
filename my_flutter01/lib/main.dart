@@ -9,6 +9,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:my_flutter01/home/HomePage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:math' as math;
 import 'package:provider/provider.dart';
@@ -25,7 +26,12 @@ import 'package:camera/camera.dart';
 import 'battery.dart';
 import 'mylocation.dart';
 
-void main() => runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final camera = await availableCameras();
+  cameraDescription = camera[0];
+  runApp(MyApp());
+}
 
 ///照相
 // Future<void> main() async {
@@ -74,6 +80,9 @@ class MyApp extends StatelessWidget {
         visualDensity: Theme.of(context).visualDensity,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      routes: {
+        "homepage": (context) => HomePageWidget(),
+      },
     );
   }
 }
@@ -258,12 +267,20 @@ class _MyHomePageState extends State<MyHomePage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Text("卧室第一个"),
-                      IconButton(
-                          focusColor: Colors.blue,
-                          onPressed: () {
-                            print("ssss");
-                          },
-                          icon: const Icon(Icons.add)),
+                      GestureDetector(
+                        onDoubleTap: () {
+                          Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (context) {
+                            return HomePageWidget();
+                          }));
+                        },
+                        child: IconButton(
+                            focusColor: Colors.blue,
+                            onPressed: () {
+                              print("ssss");
+                            },
+                            icon: const Icon(Icons.add)),
+                      ),
                     ],
                   ),
                   Row(
@@ -648,10 +665,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     onPressed: () {
                       Navigator.of(context)
                           .push(MaterialPageRoute(builder: (context) {
-                        return Container();
+                        return CameraOuterWidget();
                       }));
                     },
-                  ),IconButton(
+                  ),
+                  IconButton(
                     tooltip: "battery",
                     icon: const Icon(
                       Icons.battery_0_bar,
@@ -663,7 +681,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         return MyBatteryWidget();
                       }));
                     },
-                  ),IconButton(
+                  ),
+                  IconButton(
                     tooltip: "原生view",
                     icon: const Icon(
                       Icons.view_agenda,
@@ -675,37 +694,38 @@ class _MyHomePageState extends State<MyHomePage> {
                         return WAndroidViewWidget();
                       }));
                     },
-                  ),IconButton(
+                  ),
+                  IconButton(
                     tooltip: "url launcher",
                     icon: const Icon(
                       Icons.launch,
                       color: Colors.redAccent,
                     ),
-                    onPressed: () async{
-                      if(!await launchUrl(Uri.parse("https://flutter.dev"))){
+                    onPressed: () async {
+                      if (!await launchUrl(Uri.parse("https://flutter.dev"))) {
                         throw 'Could not lunche';
                       }
-
                     },
                   ),
                 ],
               ),
-
-              Row(children: [
-                IconButton(
-                  tooltip: "location",
-                  icon: const Icon(
-                    Icons.location_city,
-                    color: Colors.blueAccent,
+              Row(
+                children: [
+                  IconButton(
+                    tooltip: "location",
+                    icon: const Icon(
+                      Icons.location_city,
+                      color: Colors.blueAccent,
+                    ),
+                    onPressed: () async {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return MyLocationWidget();
+                      }));
+                    },
                   ),
-                  onPressed: () async{
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context){
-                      return MyLocationWidget();
-                    }));
-                  },
-                ),
-
-              ],),
+                ],
+              ),
             ],
           ),
         ),
@@ -3934,31 +3954,44 @@ class VideoPlayerTestState extends State<VideoPlayerTestWidget> {
 
 ///Camera
 ///
+///
+class CameraOuterWidget extends StatelessWidget {
+  const CameraOuterWidget({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        title: "照相测试",
+        home: CameraTestWidget());
+  }
+}
+
 class CameraTestWidget extends StatefulWidget {
-  final CameraDescription camera;
-
-  const CameraTestWidget({Key? key, required this.camera}) : super(key: key);
-
   @override
   State<StatefulWidget> createState() {
     return CameraTestWidgetState();
   }
 }
 
+late CameraDescription cameraDescription;
+
 class CameraTestWidgetState extends State<CameraTestWidget> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
 
+  Future<void> getCamera() async {
+    WidgetsFlutterBinding.ensureInitialized();
+  }
+
   @override
   void initState() {
     super.initState();
-    _controller = CameraController(widget.camera, ResolutionPreset.medium);
+    _controller = CameraController(cameraDescription, ResolutionPreset.medium);
     _initializeControllerFuture = _controller.initialize();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _controller.dispose();
     super.dispose();
   }
@@ -3966,39 +3999,42 @@ class CameraTestWidgetState extends State<CameraTestWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("拍照"),
-      ),
-      body: FutureBuilder<void>(
-          future: _initializeControllerFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return CameraPreview(_controller);
-            } else {
-              return const Center(child: CircularProgressIndicator());
+        appBar: AppBar(
+          title: Text("拍照"),
+        ),
+        body: FutureBuilder<void>(
+            future: _initializeControllerFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return CameraPreview(_controller);
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            }),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            try {
+              await _initializeControllerFuture;
+              final image = await _controller.takePicture();
+              if (!mounted) {
+                print("camera eerror");
+                return;
+              }
+              await Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) {
+                return Scaffold(
+                  appBar: AppBar(
+                    title: Text("照片"),
+                  ),
+                  body: Image.file(File(image.path)),
+                );
+              }));
+            } catch (e) {
+              print(e);
             }
-          }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          try {
-            await _initializeControllerFuture;
-            final image = await _controller.takePicture();
-            if (!mounted) return;
-            await Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) {
-              return Scaffold(
-                appBar: AppBar(
-                  title: Text("照片"),
-                ),
-                body: Image.file(File(image.path)),
-              );
-            }));
-          } catch (e) {
-            print(e);
-          }
-        },
-        child: Icon(Icons.camera_alt),
-      ),
+          },
+          child: Icon(Icons.camera_alt),
+        ),
     );
   }
 }

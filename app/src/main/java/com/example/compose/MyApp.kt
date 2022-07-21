@@ -11,6 +11,7 @@ class MyApp : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
         flutterEngine = FlutterEngine(this)
+//        flutterEngine.navigationChannel.setInitialRoute("homepage")
         flutterEngine.dartExecutor.executeDartEntrypoint(
             DartExecutor.DartEntrypoint.createDefault()
         )

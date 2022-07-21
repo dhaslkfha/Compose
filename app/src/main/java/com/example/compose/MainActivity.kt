@@ -55,13 +55,13 @@ class MainActivity : AppCompatActivity() {
             AppTheme {
                 Greeting(mainViewModel.name) {
 //                    startActivity(Intent(this, FlutterActivity::class.java))
-//                    startActivity(FlutterActivity.createDefaultIntent(this))
-                    startActivity(
-                        FlutterActivity
-                            .withCachedEngine(Engine_ID)
-//                            .initialRoute("/my_route")
-                            .build(this)
-                    )
+                    startActivity(FlutterActivity.createDefaultIntent(this))
+//                    startActivity(
+//                        FlutterActivity
+//                            .withCachedEngine(Engine_ID)
+////                            .initialRoute("/my_route")
+//                            .build(this)
+//                    )
                 }
             }
         }
