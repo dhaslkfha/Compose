@@ -25,14 +25,14 @@ import 'package:camera/camera.dart';
 
 import 'battery.dart';
 import 'mylocation.dart';
-
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final camera = await availableCameras();
-  cameraDescription = camera[0];
-  runApp(MyApp());
-}
-
+///相机
+// Future<void> main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   final camera = await availableCameras();
+//   cameraDescription = camera[0];
+//   runApp(MyApp());
+// }
+void main() => runApp(MyApp());
 ///照相
 // Future<void> main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
