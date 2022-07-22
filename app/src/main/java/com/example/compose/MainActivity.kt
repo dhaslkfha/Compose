@@ -66,7 +66,9 @@ class MainActivity : AppCompatActivity() {
             AppTheme {
                 Greeting(mainViewModel.name) {
 //                    startActivity(Intent(this, FlutterActivity::class.java))
+                    //这里可以使用相机拍照功能
 //                    startActivity(FlutterActivity.createDefaultIntent(this))
+                    //这里使用原生交互通信功能
                     startActivity(
                         FlutterActivity
                             .withCachedEngine(Engine_ID)

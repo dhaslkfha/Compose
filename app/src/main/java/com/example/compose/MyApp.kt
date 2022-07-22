@@ -10,7 +10,7 @@ class MyApp : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
         Companion.flutterEngine = FlutterEngine(this)
-//        flutterEngine.navigationChannel.setInitialRoute("homepage")
+        flutterEngine.navigationChannel.setInitialRoute("homepage")
         Companion.flutterEngine.dartExecutor.executeDartEntrypoint(
             DartExecutor.DartEntrypoint.createDefault()
         )
