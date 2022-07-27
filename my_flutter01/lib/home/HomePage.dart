@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:my_flutter01/home/hometab.dart';
 import 'package:path/path.dart';
+import 'homelist.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+import 'mybanner.dart';
 
 ///首页
 class HomePageWidget extends StatefulWidget {
@@ -14,19 +18,19 @@ class HomePageWidget extends StatefulWidget {
 class _HomePageWidgetState extends State<HomePageWidget> {
   List<Widget> widgetList = [
     Column(
-      children: const [
+      children: [
         homeTopWidget(),
+        Expanded(child: MyHomeList()),
+      ],
+    ),
+    Column(
+      children: [
         Expanded(
           child: WebView(
             initialUrl: "https://flutter.dev",
             javascriptMode: JavascriptMode.unrestricted,
           ),
         ),
-      ],
-    ),
-    Column(
-      children: [
-        SizedBox(height: 200, child: MyBanner()),
         Expanded(child: const Center(child: Text("第二个界面"))),
         MyBannerImage(
             "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto")
@@ -93,149 +97,69 @@ class _homeTopWidgetState extends State<homeTopWidget> {
           children: [
             Expanded(
                 flex: 1,
-                child: TextField(
-                  textAlign: TextAlign.start,
-                  maxLines: 1,
-                  textAlignVertical: TextAlignVertical.center,
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        borderSide: BorderSide(width: 0, color: Colors.grey)),
-                    hintText: "请输入关键字搜索",
-                    prefixIcon: Icon(Icons.search_rounded),
-                    isCollapsed: false,
-                    contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextField(
+                    textAlign: TextAlign.start,
+                    maxLines: 1,
+                    textAlignVertical: TextAlignVertical.center,
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          borderSide: BorderSide(width: 0, color: Colors.grey)),
+                      hintText: "请输入关键字搜索",
+                      prefixIcon: Icon(Icons.search_rounded),
+                      isCollapsed: false,
+                      contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+                    ),
+                    textCapitalization: TextCapitalization.characters,
+                    onSubmitted: (input) {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text("输入提示"),
+                              content: Text("你输入了 $input"),
+                              actions: [
+                                TextButton(
+                                  child: Text("确定"),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                )
+                              ],
+                            );
+                          });
+                    },
                   ),
-                  textCapitalization: TextCapitalization.characters,
-                  onSubmitted: (input) {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text("输入提示"),
-                            content: Text("你输入了 $input"),
-                            actions: [
-                              TextButton(
-                                child: Text("确定"),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              )
-                            ],
-                          );
-                        });
-                  },
                 )),
-            SizedBox(
+            Container(
                 height: 50,
                 width: 50,
-                child: OutlinedButton(
-                  onPressed: () {},
-                  child: Icon(
-                    Icons.add,
-                    color: Colors.black,
+                padding: EdgeInsets.all(10.0),
+                child: Stack(children: [
+                  OutlinedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (context){return homeTab();}));
+                    },
+                    child: Container(),
+                    style: OutlinedButton.styleFrom(
+                        fixedSize: Size(30, 30),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                        side: BorderSide(color: Colors.black, width: 2)),
                   ),
-                  style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25)),
-                      side: BorderSide(color: Colors.black, width: 2)),
-                )),
+                  Center(
+                    child: Icon(
+                      Icons.add,
+                      color: Colors.black,
+                    ),
+                  ),
+                ])),
           ],
         ),
       ),
     );
   }
 }
-
-class MyBanner extends StatefulWidget {
-  const MyBanner({Key? key}) : super(key: key);
-
-  @override
-  State<MyBanner> createState() => _MyBannerState();
-}
-
-class _MyBannerState extends State<MyBanner> {
-  PageController _controller = PageController();
-  int _currentIndex = 0;
-  final List<String> urls = [
-    "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto",
-    "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto",
-    "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto",
-    "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto",
-    "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto"
-  ];
-
-  List<Widget> imgs = [
-    Image.network(
-        "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto"),
-    Image.network(
-        "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto"),
-    Image.network(
-        "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto"),
-    Image.network(
-        "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto"),
-    Image.network(
-        "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto"),
-  ];
-
-  @override
-  void initState() {
-    // imgs = [MyBannerImage(url:urls[0]),MyBannerImage(url:urls[0]),MyBannerImage(url:urls[0]),MyBannerImage(url:urls[0]),MyBannerImage(url:urls[0]),];
-    // imgs = List.generate(urls.length, (index) => MyBannerImage(urls[index]));
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 200,
-      child: Stack(children: [
-        PageView(
-          controller: _controller,
-          onPageChanged: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          children: [
-            Image.network(
-                "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto"),
-            Image.network(
-                "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto"),
-            Image.network(
-                "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto"),
-            Image.network(
-                "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto"),
-            Image.network(
-                "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto"),
-          ],
-        ),
-        Positioned(
-            bottom: 10,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                  imgs.length,
-                  (index) => Container(
-                        margin: EdgeInsets.symmetric(horizontal: 5),
-                        height: 10,
-                        width: 10,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _currentIndex == index
-                                ? Colors.blue
-                                : Colors.grey),
-                      )),
-            ))
-      ]),
-    );
-  }
-}
-
-Widget MyBannerImage(String url) => Image.network(
-      url,
-      fit: BoxFit.contain,
-    );
