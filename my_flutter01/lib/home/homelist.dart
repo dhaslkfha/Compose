@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_flutter01/detail/detailinfo.dart';
 
 import 'mybanner.dart';
 
@@ -15,16 +16,21 @@ class MyHomeList extends StatefulWidget {
 class _MyHomeListState extends State<MyHomeList> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        padding: EdgeInsets.all(8.0),
-        itemCount: 21,
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return SizedBox(height: 200, child: MyBanner());
-          } else {
-            return MyListItem();
-          }
-        });
+    return RefreshIndicator(
+      onRefresh: () async {
+        return Future<void>.delayed(Duration(seconds: 3));
+      },
+      child: ListView.builder(
+          padding: EdgeInsets.all(8.0),
+          itemCount: 21,
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              return SizedBox(height: 200, child: MyBanner());
+            } else {
+              return MyListItem();
+            }
+          }),
+    );
   }
 }
 
@@ -44,7 +50,15 @@ class _MyListItemState extends State<MyListItem> {
         child: Column(
           children: [
             headItem(),
-            Image.network("$imsg"),
+            GestureDetector(
+                onTap: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) {
+                    return detailinfoWidget();
+                  }));
+                },
+                child: MyBannerImage(
+                    "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto")),
             bottomItem(),
           ],
         ),
@@ -62,11 +76,16 @@ Widget headItem() => Row(
         Row(
           children: [Icon(Icons.menu_book), Icon(Icons.menu_open)],
         ),
+        Expanded(child: Container()),
         TextButton(
             onPressed: () {},
+            style: OutlinedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5)),
+                side: BorderSide(color: Colors.green, width: 1)),
             child: Row(
               children: [Icon(Icons.add), Text("add")],
-            ))
+            )),
       ],
     );
 

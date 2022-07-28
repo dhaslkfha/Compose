@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:my_flutter01/home/hometab.dart';
-import 'package:path/path.dart';
-import 'homelist.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-
-import 'mybanner.dart';
 
 ///首页
 class HomePageWidget extends StatefulWidget {
@@ -20,20 +15,15 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     Column(
       children: [
         homeTopWidget(),
-        Expanded(child: MyHomeList()),
+        // Expanded(child: MyHomeList()),
+        Expanded(
+          child: homeTab(),
+        ),
       ],
     ),
     Column(
       children: [
-        Expanded(
-          child: WebView(
-            initialUrl: "https://flutter.dev",
-            javascriptMode: JavascriptMode.unrestricted,
-          ),
-        ),
         Expanded(child: const Center(child: Text("第二个界面"))),
-        MyBannerImage(
-            "https://bkimg.cdn.bcebos.com/pic/7af40ad162d9f2d3ea2b4b92a6ec8a136327cc91?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2UxNTA=,g_7,xp_5,yp_5/format,f_auto")
       ],
     ),
   ];
@@ -102,7 +92,7 @@ class _homeTopWidgetState extends State<homeTopWidget> {
                   child: TextField(
                     textAlign: TextAlign.start,
                     maxLines: 1,
-                    textAlignVertical: TextAlignVertical.center,
+                    textAlignVertical: TextAlignVertical.bottom,
                     controller: _controller,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -141,7 +131,7 @@ class _homeTopWidgetState extends State<homeTopWidget> {
                 child: Stack(children: [
                   OutlinedButton(
                     onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context){return homeTab();}));
+                      print("click the button");
                     },
                     child: Container(),
                     style: OutlinedButton.styleFrom(
