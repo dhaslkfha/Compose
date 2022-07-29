@@ -1,6 +1,9 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:my_flutter01/home/hometab.dart';
+
+import '../my/mypage.dart';
 
 ///首页
 class HomePageWidget extends StatefulWidget {
@@ -11,6 +14,31 @@ class HomePageWidget extends StatefulWidget {
 }
 
 class _HomePageWidgetState extends State<HomePageWidget> {
+  late ConnectivityResult connectivity;
+
+  Future<void> lisentenConnet() async {
+    Connectivity().onConnectivityChanged.listen((event) {
+      getconnect();
+    });
+  }
+
+  Future<void> getconnect() async {
+    connectivity = await Connectivity().checkConnectivity();
+    if (connectivity == ConnectivityResult.mobile) {
+      setState(() {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text("mobile connect"),
+        ));
+      });
+    }else if(connectivity == ConnectivityResult.mobile){
+      setState(() {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          content: Text("wifi connect"),
+        ));
+      });
+    }
+  }
+
   List<Widget> widgetList = [
     Column(
       children: [
@@ -21,11 +49,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         ),
       ],
     ),
-    Column(
-      children: [
-        Expanded(child: const Center(child: Text("第二个界面"))),
-      ],
-    ),
+    MyPage(),
   ];
   int _selected = 0;
 
@@ -37,6 +61,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
   @override
   Widget build(BuildContext context) {
+    lisentenConnet();
     return Scaffold(
       body: Column(
         children: [
@@ -45,8 +70,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           ),
           BottomNavigationBar(
             items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: "首页"),
-              BottomNavigationBarItem(icon: Icon(Icons.settings), label: "我的"),
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+              BottomNavigationBarItem(icon: Icon(Icons.settings), label: "My"),
             ],
             selectedItemColor: Colors.amber[500],
             type: BottomNavigationBarType.fixed,
@@ -98,7 +123,7 @@ class _homeTopWidgetState extends State<homeTopWidget> {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           borderSide: BorderSide(width: 0, color: Colors.grey)),
-                      hintText: "请输入关键字搜索",
+                      hintText: "Input the key words",
                       prefixIcon: Icon(Icons.search_rounded),
                       isCollapsed: false,
                       contentPadding: EdgeInsets.symmetric(vertical: 10.0),
@@ -109,11 +134,11 @@ class _homeTopWidgetState extends State<homeTopWidget> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: Text("输入提示"),
-                              content: Text("你输入了 $input"),
+                              title: Text("Tips"),
+                              content: Text("you typed $input"),
                               actions: [
                                 TextButton(
-                                  child: Text("确定"),
+                                  child: Text("Ok"),
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },

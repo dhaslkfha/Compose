@@ -25,6 +25,7 @@ import 'package:camera/camera.dart';
 
 import 'battery.dart';
 import 'mylocation.dart';
+
 ///相机
 // Future<void> main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +34,7 @@ import 'mylocation.dart';
 //   runApp(MyApp());
 // }
 void main() => runApp(MyApp());
+
 ///照相
 // Future<void> main() async {
 //   WidgetsFlutterBinding.ensureInitialized();
@@ -3960,9 +3962,7 @@ class CameraOuterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: "照相测试",
-        home: CameraTestWidget());
+    return MaterialApp(title: "照相测试", home: CameraTestWidget());
   }
 }
 
@@ -3999,42 +3999,42 @@ class CameraTestWidgetState extends State<CameraTestWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("拍照"),
-        ),
-        body: FutureBuilder<void>(
-            future: _initializeControllerFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return CameraPreview(_controller);
-              } else {
-                return const Center(child: CircularProgressIndicator());
-              }
-            }),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            try {
-              await _initializeControllerFuture;
-              final image = await _controller.takePicture();
-              if (!mounted) {
-                print("camera eerror");
-                return;
-              }
-              await Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (context) {
-                return Scaffold(
-                  appBar: AppBar(
-                    title: Text("照片"),
-                  ),
-                  body: Image.file(File(image.path)),
-                );
-              }));
-            } catch (e) {
-              print(e);
+      appBar: AppBar(
+        title: Text("拍照"),
+      ),
+      body: FutureBuilder<void>(
+          future: _initializeControllerFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return CameraPreview(_controller);
+            } else {
+              return const Center(child: CircularProgressIndicator());
             }
-          },
-          child: Icon(Icons.camera_alt),
-        ),
+          }),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          try {
+            await _initializeControllerFuture;
+            final image = await _controller.takePicture();
+            if (!mounted) {
+              print("camera eerror");
+              return;
+            }
+            await Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) {
+              return Scaffold(
+                appBar: AppBar(
+                  title: Text("照片"),
+                ),
+                body: Image.file(File(image.path)),
+              );
+            }));
+          } catch (e) {
+            print(e);
+          }
+        },
+        child: Icon(Icons.camera_alt),
+      ),
     );
   }
 }
