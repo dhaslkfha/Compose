@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -15,24 +17,40 @@ class HomePageWidget extends StatefulWidget {
 
 class _HomePageWidgetState extends State<HomePageWidget> {
   late ConnectivityResult connectivity;
+  late StreamSubscription subscription;
 
-  Future<void> lisentenConnet() async {
-    Connectivity().onConnectivityChanged.listen((event) {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    lisentenConnet();
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    subscription.cancel();
+  }
+  void lisentenConnet()  {
+    print("lisentenConnet");
+    subscription = Connectivity().onConnectivityChanged.listen((event) {
+      print("onConnectivityChanged : $event");
       getconnect();
     });
   }
+
 
   Future<void> getconnect() async {
     connectivity = await Connectivity().checkConnectivity();
     if (connectivity == ConnectivityResult.mobile) {
       setState(() {
-        Scaffold.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("mobile connect"),
         ));
       });
-    }else if(connectivity == ConnectivityResult.mobile){
+    }else if(connectivity == ConnectivityResult.wifi){
       setState(() {
-        Scaffold.of(context).showSnackBar(SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("wifi connect"),
         ));
       });
@@ -61,7 +79,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
   @override
   Widget build(BuildContext context) {
-    lisentenConnet();
+
     return Scaffold(
       body: Column(
         children: [

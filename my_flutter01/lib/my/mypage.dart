@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:my_flutter01/my/aboutus.dart';
 import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MyPage extends StatefulWidget {
@@ -13,6 +14,32 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
+  List<String> selects = List.generate(18, (index) => "0");
+  late SharedPreferences sp;
+
+  Future<void> getSelects() async {
+    sp = await SharedPreferences.getInstance();
+    setState(() {
+      selects = sp.getStringList("select") ?? List.generate(18, (index) => "0");
+      print("select: ${selects.toString()}");
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    sp.setStringList("select", selects);
+    print("setselect: ${selects.toString()}");
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getSelects();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,10 +61,23 @@ class _MyPageState extends State<MyPage> {
           ),
           SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
-              if (index < 18) {
+              if (index == 0) {
+                return myTopWidget();
+              } else if (index < 18 && index > 0) {
                 return SwitchListTile(
-                  value: false,
-                  onChanged: (value) {},
+                  value: selects[index] == "1",
+                  onChanged: (value) {
+                    var cur = "";
+                    if (value) {
+                      cur = "1";
+                    } else {
+                      cur = "0";
+                    }
+                    setState(() {
+                      selects[index] = cur;
+                      sp.setStringList("select", selects);
+                    });
+                  },
                   title: Text("Setting $index"),
                 );
               } else if (index == 18) {
@@ -110,3 +150,90 @@ class _MyPageState extends State<MyPage> {
     );
   }
 }
+
+Widget myTopWidget() => Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Align(
+            child: Icon(
+              Icons.settings,
+              color: Colors.black,
+              size: 20,
+            ),
+            alignment: Alignment.centerRight,
+          ),
+          ClipOval(
+              child: SizedBox(
+                  height: 80,
+                  width: 80,
+                  child: Image.network(
+                    "https://img.uni.changan.com.cn/base/2022/06/17/1655432716860androidios1920_864.jpeg",
+                    fit: BoxFit.cover,
+                  ))),
+          Divider(
+            height: 20,
+            color: Colors.transparent,
+
+          ),
+          Text(
+            "My Nick Name ",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          Divider(
+            height: 20,
+            color: Colors.transparent,
+          ),
+          Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.all(2),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.red[200]),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.currency_bitcoin,
+                  color: Colors.red,
+                  size: 20,
+                ),
+                Text(
+                  "My bitcoin is 192",
+                  style: TextStyle(fontSize: 20),
+                ),
+                Icon(
+                  Icons.arrow_right,
+                  size: 18,
+                ),
+              ],
+            ),
+          ),
+          Divider(
+            height: 20,
+            color: Colors.transparent,
+
+          ),
+          Table(
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+            children: [
+              TableRow(children: [
+                Text("34",textAlign: TextAlign.center,style: TextStyle(fontSize: 18),),
+                Text("49",textAlign: TextAlign.center,style: TextStyle(fontSize: 18),),
+                Text("1174",textAlign: TextAlign.center,style: TextStyle(fontSize: 18),),
+                Text("81",textAlign: TextAlign.center,style: TextStyle(fontSize: 18),),
+              ]),
+              TableRow(children: [
+                Text("fans",textAlign: TextAlign.center,style: TextStyle(fontSize: 18),),
+                Text("follow",textAlign: TextAlign.center,style: TextStyle(fontSize: 18),),
+                Text("posts",textAlign: TextAlign.center,style: TextStyle(fontSize: 18),),
+                Text("favourite",textAlign: TextAlign.center,style: TextStyle(fontSize: 18),),
+              ]),
+            ],
+          )
+        ],
+      ),
+    );
