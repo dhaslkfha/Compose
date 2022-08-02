@@ -44,6 +44,7 @@ dependencies:
   animated_text_kit: ^4.2.2
   device_info_plus: ^4.0.1 #device info
   connectivity_plus: ^2.3.6 #connection info
+  package_info_plus: ^1.4.3 #app package info
 
 dependency_overrides:
 #  camera_android: 0.9.7+1
@@ -71,8 +72,8 @@ flutter:
   # To add Flutter specific assets to your application, add an assets section,
   # like this:
   assets:
-     - images/myimg.png
-     - images/img.png
+    - images/myimg.png
+    - images/img.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

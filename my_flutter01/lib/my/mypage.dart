@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:my_flutter01/my/aboutus.dart';
+import 'package:my_flutter01/my/setting.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -62,7 +63,7 @@ class _MyPageState extends State<MyPage> {
           SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
               if (index == 0) {
-                return myTopWidget();
+                return myTopWidget(context);
               } else if (index < 18 && index > 0) {
                 return SwitchListTile(
                   value: selects[index] == "1",
@@ -151,17 +152,25 @@ class _MyPageState extends State<MyPage> {
   }
 }
 
-Widget myTopWidget() => Padding(
+Widget myTopWidget(BuildContext context) => Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Align(
-            child: Icon(
-              Icons.settings,
-              color: Colors.black,
-              size: 20,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) {
+                  return Setting();
+                }));
+              },
+              child: Icon(
+                Icons.settings,
+                color: Colors.black,
+                size: 20,
+              ),
             ),
             alignment: Alignment.centerRight,
           ),
@@ -176,7 +185,6 @@ Widget myTopWidget() => Padding(
           Divider(
             height: 20,
             color: Colors.transparent,
-
           ),
           Text(
             "My Nick Name ",
@@ -188,7 +196,8 @@ Widget myTopWidget() => Padding(
           ),
           Container(
             alignment: Alignment.center,
-            padding: EdgeInsets.all(2),
+            padding: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+            margin: EdgeInsets.symmetric(horizontal: 20),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 color: Colors.red[200]),
@@ -215,25 +224,108 @@ Widget myTopWidget() => Padding(
           Divider(
             height: 20,
             color: Colors.transparent,
-
           ),
           Table(
             defaultVerticalAlignment: TableCellVerticalAlignment.middle,
             children: [
               TableRow(children: [
-                Text("34",textAlign: TextAlign.center,style: TextStyle(fontSize: 18),),
-                Text("49",textAlign: TextAlign.center,style: TextStyle(fontSize: 18),),
-                Text("1174",textAlign: TextAlign.center,style: TextStyle(fontSize: 18),),
-                Text("81",textAlign: TextAlign.center,style: TextStyle(fontSize: 18),),
+                Text(
+                  "34",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
+                Text(
+                  "49",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
+                Text(
+                  "1174",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
+                Text(
+                  "81",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
               ]),
               TableRow(children: [
-                Text("fans",textAlign: TextAlign.center,style: TextStyle(fontSize: 18),),
-                Text("follow",textAlign: TextAlign.center,style: TextStyle(fontSize: 18),),
-                Text("posts",textAlign: TextAlign.center,style: TextStyle(fontSize: 18),),
-                Text("favourite",textAlign: TextAlign.center,style: TextStyle(fontSize: 18),),
+                Text(
+                  "fans",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
+                Text(
+                  "follow",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
+                Text(
+                  "posts",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
+                Text(
+                  "favourite",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 18),
+                ),
               ]),
             ],
-          )
+          ),
+          Divider(
+            height: 20,
+            color: Colors.transparent,
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20), color: Colors.white),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "daily sign",
+                  style: TextStyle(color: Colors.black, fontSize: 20),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(
+                    7,
+                    (index) => Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: ShapeDecoration(
+                              color: Colors.red[100],
+                              shape: BeveledRectangleBorder(
+                                  side:
+                                      BorderSide(width: 0.5, color: Colors.red),
+                                  borderRadius: BorderRadius.circular(10))),
+                          child: Text(
+                            "+1",
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                            "${DateTime.now().add(Duration(days: 1 * index)).month}.${DateTime.now().add(Duration(days: 1 * index)).day}")
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

@@ -45,13 +45,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     if (connectivity == ConnectivityResult.mobile) {
       setState(() {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("mobile connect"),
+          content: Text("mobile connect"),behavior: SnackBarBehavior.fixed,
         ));
       });
     }else if(connectivity == ConnectivityResult.wifi){
       setState(() {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("wifi connect"),
+          content: Text("wifi connect"),behavior: SnackBarBehavior.floating
         ));
       });
     }
