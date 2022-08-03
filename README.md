@@ -1,6 +1,10 @@
 # Compose
 Compose&amp;Flutter
 
+# Introduce
+If you want to Learn Flutter, and Android with Flutter combine Development, you can check this repository.
+There is a Android project, import a flutter model, and implement the communication with each others.
+
 
 用于Compose的各种组件的学习使用，
 Compose和Flutter的结合使用

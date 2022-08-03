@@ -25,13 +25,15 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     super.initState();
     lisentenConnet();
   }
+
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
     subscription.cancel();
   }
-  void lisentenConnet()  {
+
+  void lisentenConnet() {
     print("lisentenConnet");
     subscription = Connectivity().onConnectivityChanged.listen((event) {
       print("onConnectivityChanged : $event");
@@ -39,20 +41,19 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     });
   }
 
-
   Future<void> getconnect() async {
     connectivity = await Connectivity().checkConnectivity();
     if (connectivity == ConnectivityResult.mobile) {
+      // setState(() {
+      //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //     content: Text("mobile connect"),behavior: SnackBarBehavior.fixed,
+      //   ));
+      //  });
+    } else if (connectivity == ConnectivityResult.none) {
       setState(() {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("mobile connect"),behavior: SnackBarBehavior.fixed,
-        ));
-      });
-    }else if(connectivity == ConnectivityResult.wifi){
-      setState(() {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text("wifi connect"),behavior: SnackBarBehavior.floating
-        ));
+            content: Text("fail connect"),
+            behavior: SnackBarBehavior.floating));
       });
     }
   }
@@ -79,7 +80,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Column(
         children: [

@@ -45,6 +45,8 @@ dependencies:
   device_info_plus: ^4.0.1 #device info
   connectivity_plus: ^2.3.6 #connection info
   package_info_plus: ^1.4.3 #app package info
+  cached_network_image: ^3.2.1 #cache image
+  image_picker: ^0.8.5+3
 
 dependency_overrides:
 #  camera_android: 0.9.7+1

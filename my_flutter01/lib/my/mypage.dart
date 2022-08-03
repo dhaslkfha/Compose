@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:my_flutter01/my/aboutus.dart';
+import 'package:my_flutter01/my/profile.dart';
 import 'package:my_flutter01/my/setting.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -174,14 +175,21 @@ Widget myTopWidget(BuildContext context) => Padding(
             ),
             alignment: Alignment.centerRight,
           ),
-          ClipOval(
-              child: SizedBox(
-                  height: 80,
-                  width: 80,
-                  child: Image.network(
-                    "https://img.uni.changan.com.cn/base/2022/06/17/1655432716860androidios1920_864.jpeg",
-                    fit: BoxFit.cover,
-                  ))),
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return Profile();
+              }));
+            },
+            child: ClipOval(
+                child: SizedBox(
+                    height: 80,
+                    width: 80,
+                    child: Image.network(
+                      "https://img.uni.changan.com.cn/base/2022/06/17/1655432716860androidios1920_864.jpeg",
+                      fit: BoxFit.cover,
+                    ))),
+          ),
           Divider(
             height: 20,
             color: Colors.transparent,
