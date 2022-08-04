@@ -8,6 +8,7 @@ Widget photoChooseDialog(BuildContext context) => CupertinoActionSheet(
       actions: [
         CupertinoActionSheetAction(
             onPressed: () {
+              print("image_picker: pop_camera");
               Navigator.of(context).pop("camera");
             },
             child: Text("Take a photo")),
@@ -24,16 +25,25 @@ Widget photoChooseDialog(BuildContext context) => CupertinoActionSheet(
           child: Text("Cancel")),
     );
 
-Future<void> showPhotoChooseDialog(BuildContext context) async {
-  var result = showCupertinoModalPopup(
+Future<void> showPhotoChooseDialog(BuildContext context,  Function(dynamic path) callback) async {
+  var result = await showCupertinoModalPopup(
       context: context,
       builder: (context) {
         return photoChooseDialog(context);
       });
+  print("image_picker: result = $result");
   if (result == "camera") {
-    showcamera(context);
+    print("image_picker:camera");
+    final imagePicker = ImagePicker();
+    var file = choseAImage(ImageSource.camera, imagePicker);
+
+    callback(file);
+    // showcamera(context);
   } else if (result == "gallery") {
-    var file = choseAImage();
+    print("image_picker:gallery");
+    final imagePicker = ImagePicker();
+    var file = choseAImage(ImageSource.gallery, imagePicker);
+    callback(file);
   } else {}
 }
 
@@ -95,9 +105,10 @@ class _TakeAPhotoState extends State<TakeAPhoto> {
 ///
 /// chose from gallery
 
-Future<String> choseAImage() async {
-  final imagePicker = ImagePicker();
-  XFile? file = await imagePicker.pickImage(source: ImageSource.gallery);
+Future<String> choseAImage(ImageSource source, ImagePicker imagePicker) async {
+  print("image_picker:choseAImage");
+  XFile? file = await imagePicker.pickImage(source: source);
   var path = file?.path ?? "";
+  print("image_picker:path = $path");
   return path;
 }

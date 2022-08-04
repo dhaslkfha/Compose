@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../utils/photohelp.dart';
 import '../utils/timehelp.dart';
+import 'hobby.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -77,7 +80,11 @@ class _ProfileItemState extends State<ProfileItem> {
             GestureDetector(
               onTap: () {
                 if (widget.bean.type == 1) {
-                  showPhotoChooseDialog(context);
+                  showPhotoChooseDialog(context, (path) {
+                    setState(() {
+                      widget.bean.img = path;
+                    });
+                  });
                 } else if (widget.bean.type == 5) {
                   showMyDatePicker(context, (datetime) {
                     setState(() {
@@ -85,6 +92,11 @@ class _ProfileItemState extends State<ProfileItem> {
                           "${datetime.year}-${datetime.month}-${datetime.day}";
                     });
                   });
+                } else if (widget.bean.type == 7) {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) {
+                    return HobbyWidget();
+                  }));
                 } else {
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text("not fulfill")));
@@ -111,13 +123,28 @@ class _ProfileItemState extends State<ProfileItem> {
                         textAlign: TextAlign.right,
                       ))),
                   Visibility(
-                      visible: widget.bean.img.isNotEmpty,
+                      visible: widget.bean.img.isNotEmpty &&
+                          widget.bean.img.startsWith("http"),
                       child: Expanded(
                         child: Container(
                             alignment: Alignment.centerRight,
                             child: ClipOval(
                                 child: Image.network(
                               widget.bean.img,
+                              width: 80,
+                              height: 80,
+                              fit: BoxFit.cover,
+                            ))),
+                      )),
+                  Visibility(
+                      visible: widget.bean.img.isNotEmpty &&
+                          !widget.bean.img.startsWith("http"),
+                      child: Expanded(
+                        child: Container(
+                            alignment: Alignment.centerRight,
+                            child: ClipOval(
+                                child: Image.file(
+                              File(widget.bean.img),
                               width: 80,
                               height: 80,
                               fit: BoxFit.cover,

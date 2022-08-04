@@ -3,29 +3,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart';
 
-Widget DataPicker(BuildContext context, Function(DateTime dateTime) callback) =>
-    Container(
-      height: 500,
-      padding: EdgeInsets.only(top: 10),
-      margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-      color: CupertinoColors.systemBackground.resolveFrom(context),
+Widget DataPicker(BuildContext context, Function(DateTime dateTime) callback) {
+  DateTime? time;
+  return Container(
+    height: 300,
+    padding: EdgeInsets.only(top: 10),
+    margin: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+    color: CupertinoColors.systemBackground.resolveFrom(context),
+    child: SafeArea(
+      top: false,
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              TextButton(onPressed: () {}, child: Text("cancel")),
-              Text(
-                "Date Picker",
-                style: TextStyle(fontSize: 20),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    if (time != null) {
+                      callback(time!);
+                    }
+                  },
+                  child: Text("cancel")),
+              TextButton(
+                onPressed: () {},
+                child: Text("Date Picker"),
               ),
-              TextButton(onPressed: () {}, child: Text("Confirm"))
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("Confirm"))
             ],
           ),
-          SafeArea(
-            top: false,
+          Flexible(
             child: CupertinoDatePicker(
+              initialDateTime: DateTime.now(),
+              use24hFormat: true,
               onDateTimeChanged: (date) {
+                time = date;
                 callback(date);
               },
               mode: CupertinoDatePickerMode.date,
@@ -33,7 +49,9 @@ Widget DataPicker(BuildContext context, Function(DateTime dateTime) callback) =>
           ),
         ],
       ),
-    );
+    ),
+  );
+}
 
 void showMyDatePicker(
     BuildContext context, Function(DateTime dateTime) callback) {
