@@ -15,8 +15,9 @@ class _HobbyWidgetState extends State<HobbyWidget> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Bobby"),
-        actions: [
-          TextButton(onPressed: () {}, child: Text("Save")),
+        actions: [IconButton(onPressed: () {
+          Navigator.pop(context);
+        }, icon: Icon(Icons.save_as)),
         ],
       ),
       body: ListView.builder(
